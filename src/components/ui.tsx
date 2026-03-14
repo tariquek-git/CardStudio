@@ -455,6 +455,7 @@ export function Input({
   uppercase = false,
   mono = false,
   className: extraClass = '',
+  inputMode,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -464,6 +465,7 @@ export function Input({
   uppercase?: boolean;
   mono?: boolean;
   className?: string;
+  inputMode?: 'numeric' | 'text';
 }) {
   return (
     <input
@@ -472,6 +474,7 @@ export function Input({
       onChange={e => onChange(uppercase ? e.target.value.toUpperCase() : e.target.value)}
       placeholder={placeholder}
       maxLength={maxLength}
+      inputMode={inputMode}
       className={`w-full px-3 py-2 text-xs rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
         mono ? 'font-mono' : ''
       } ${
@@ -494,6 +497,7 @@ export function LabeledInput({
   uppercase = false,
   mono = false,
   hint,
+  inputMode,
 }: {
   label: string;
   value: string;
@@ -504,6 +508,7 @@ export function LabeledInput({
   uppercase?: boolean;
   mono?: boolean;
   hint?: ReactNode;
+  inputMode?: 'numeric' | 'text';
 }) {
   return (
     <div>
@@ -523,6 +528,7 @@ export function LabeledInput({
         isDark={isDark}
         uppercase={uppercase}
         mono={mono}
+        inputMode={inputMode}
       />
       {hint}
     </div>

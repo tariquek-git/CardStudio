@@ -88,7 +88,7 @@ export default function LeftPanel() {
 
   return (
     <div
-      className={`w-[300px] min-w-[300px] h-full overflow-y-auto ${
+      className={`w-[280px] sm:w-[300px] min-w-[280px] sm:min-w-[300px] h-full overflow-y-auto ${
         isDark ? 'bg-slate-900 border-r border-slate-700/30' : 'bg-slate-50/80 border-r border-slate-200'
       }`}
     >
@@ -452,6 +452,7 @@ export default function LeftPanel() {
               {config.cardNumberDisplay !== 'hidden' && (
                 <div>
                   <Label isDark={isDark}>Card Number</Label>
+
                   <Input
                     value={config.customCardNumber}
                     onChange={v => {
@@ -463,6 +464,7 @@ export default function LeftPanel() {
                     maxLength={config.network === 'amex' ? 15 : 16}
                     isDark={isDark}
                     mono
+                    inputMode="numeric"
                   />
                   {config.customCardNumber && (
                     <button
@@ -496,6 +498,7 @@ export default function LeftPanel() {
                 maxLength={config.network === 'amex' ? 4 : 5}
                 isDark={isDark}
                 mono
+                inputMode="numeric"
               />
             </>
           )}
@@ -586,8 +589,20 @@ function IssuerLogoUpload({
       alert('Logo must be under 200KB');
       return;
     }
+    const validTypes = ['image/png', 'image/jpeg', 'image/svg+xml'];
+    if (!validTypes.includes(file.type)) {
+      alert('Unsupported file type. Please use PNG, JPG, or SVG.');
+      return;
+    }
     const reader = new FileReader();
-    reader.onload = () => onChange(reader.result as string);
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const img = new Image();
+      img.onload = () => onChange(dataUrl);
+      img.onerror = () => alert('Failed to load image. The file may be corrupted.');
+      img.src = dataUrl;
+    };
+    reader.onerror = () => alert('Failed to read file.');
     reader.readAsDataURL(file);
   };
 
@@ -921,7 +936,12 @@ function CardArtSection({
               title={sa.label}
             >
               {sa.src ? (
-                <img src={sa.src} alt={sa.label} className="w-full h-full object-cover" />
+                <img
+                  src={sa.src}
+                  alt={sa.label}
+                  className="w-full h-full object-cover"
+                  style={{ background: 'linear-gradient(135deg, #1e3a5f, #2d1b4e)' }}
+                />
               ) : (
                 <div className={`w-full h-full ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`} />
               )}

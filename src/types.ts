@@ -20,11 +20,7 @@ export type CardFace = 'front' | 'back';
 
 export type CardMaterial = 'matte' | 'glossy' | 'metal' | 'brushedMetal' | 'clear' | 'holographic' | 'recycledPlastic' | 'wood';
 
-export type PhoneColor = 'black' | 'white' | 'silver';
-
-export type WalletApp = 'apple' | 'google';
-
-export type PreviewMode = 'wallet' | 'terminal';
+export type RenderScene = '3d' | 'wallet-apple' | 'wallet-google' | 'terminal';
 
 export type BackLogo = 'cirrus' | 'plus' | 'star' | 'pulse';
 
@@ -67,9 +63,6 @@ export interface CardConfig {
   customCardNumber: string;
   face: CardFace;
   material: CardMaterial;
-  walletApp: WalletApp;
-  phoneColor: PhoneColor;
-  showNotifications: boolean;
   walletDarkMode: boolean;
   cardArt: string | null;
   cardArtOpacity: number;
@@ -82,7 +75,7 @@ export interface CardConfig {
   numberless: boolean;
   numberPosition: NumberPosition;
   programName: string;
-  previewMode: PreviewMode;
+  renderScene: RenderScene;
   backLogos: BackLogo[];
   darkMode: boolean;
 }
@@ -124,9 +117,6 @@ export const defaultConfig: CardConfig = {
   customCardNumber: '',
   face: 'front',
   material: 'matte',
-  walletApp: 'apple',
-  phoneColor: 'black',
-  showNotifications: false,
   walletDarkMode: true,
   cardArt: null,
   cardArtOpacity: 90,
@@ -139,7 +129,7 @@ export const defaultConfig: CardConfig = {
   numberless: false,
   numberPosition: 'standard',
   programName: '',
-  previewMode: 'wallet',
+  renderScene: '3d',
   backLogos: [],
   darkMode: true,
 };

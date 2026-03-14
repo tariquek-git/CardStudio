@@ -48,6 +48,14 @@ function getEffectiveBgColor(config: CardConfig): string {
   return config.solidColor;
 }
 
+// For gradient mode, returns all stop colors so contrast can be checked against each
+function getEffectiveBgColors(config: CardConfig): string[] {
+  if (config.colorMode === 'gradient' && config.gradientConfig.stops.length > 1) {
+    return config.gradientConfig.stops.map(s => s.color);
+  }
+  return [getEffectiveBgColor(config)];
+}
+
 function getEffectiveTextColor(config: CardConfig): string {
   if (config.textColorOverride) return config.textColorOverride;
   const bg = getEffectiveBgColor(config);
@@ -169,11 +177,12 @@ const rules: BrandRule[] = [
     };
   },
 
-  // Text contrast check
+  // Text contrast check — for gradients, only warn if ALL stops fail
   (config) => {
-    const bg = getEffectiveBgColor(config);
+    const bgColors = getEffectiveBgColors(config);
     const text = getEffectiveTextColor(config);
-    if (contrastRatio(bg, text) >= 3.0) return null;
+    const allFail = bgColors.every(bg => contrastRatio(bg, text) < 3.0);
+    if (!allFail) return null;
     return {
       id: 'text-contrast',
       severity: 'warning',

@@ -5,8 +5,10 @@ import * as THREE from 'three';
 import { useCardConfig } from '../context';
 import { drawCardFront, drawCardBack, ensureLogosLoaded } from '../cardCanvas';
 import { presetColors } from '../data';
-import type { CardMaterial } from '../types';
+import type { CardMaterial, RenderScene } from '../types';
 import { downloadCardSVG } from '../svgExport';
+import { PhoneFrame, AppleWalletView, GoogleWalletView } from './WalletPreview';
+import POSTerminalPreview from './POSTerminalPreview';
 
 // ─── Error Boundary for WebGL Canvas ────────────────────────
 class CanvasErrorBoundary extends Component<
@@ -85,9 +87,9 @@ function getMaterialProps(material: CardMaterial): Partial<THREE.MeshPhysicalMat
     case 'holographic':
       return { roughness: 0.2, metalness: 0.8, clearcoat: 0.8, clearcoatRoughness: 0.05, iridescence: 1.0, iridescenceIOR: 1.3, iridescenceThicknessRange: [100, 400] as [number, number] };
     case 'recycledPlastic':
-      return { roughness: 0.95, metalness: 0.0 };
+      return { roughness: 0.95, metalness: 0.0, sheen: 0.2, sheenRoughness: 0.9, sheenColor: new THREE.Color('#a0a0a0') };
     case 'wood':
-      return { roughness: 0.75, metalness: 0.0 };
+      return { roughness: 0.75, metalness: 0.0, sheen: 0.15, sheenRoughness: 0.7, sheenColor: new THREE.Color('#8B6914') };
     case 'matte':
     default:
       return { roughness: 0.85, metalness: 0.0, sheen: 0.3, sheenRoughness: 0.8, sheenColor: new THREE.Color('#ffffff') };
@@ -157,17 +159,29 @@ function Card3D() {
   const groupRef = useRef<THREE.Group>(null);
   const targetFlip = useRef(0);
   const currentFlip = useRef(0);
+  const smoothTiltX = useRef(0);
+  const smoothTiltY = useRef(0);
+  const frontMatRef = useRef<THREE.MeshPhysicalMaterial>(null);
+  const backMatRef = useRef<THREE.MeshPhysicalMaterial>(null);
 
   const frontCanvas = useMemo(() => document.createElement('canvas'), []);
   const backCanvas = useMemo(() => document.createElement('canvas'), []);
   const frontTex = useMemo(() => {
     const tex = new THREE.CanvasTexture(frontCanvas);
     tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.anisotropy = 16;
+    tex.generateMipmaps = true;
     return tex;
   }, [frontCanvas]);
   const backTex = useMemo(() => {
     const tex = new THREE.CanvasTexture(backCanvas);
     tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.anisotropy = 16;
+    tex.generateMipmaps = true;
     return tex;
   }, [backCanvas]);
 
@@ -226,7 +240,7 @@ function Card3D() {
 
   const matProps = getMaterialProps(config.material);
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (!groupRef.current) return;
 
     const diff = targetFlip.current - currentFlip.current;
@@ -234,10 +248,23 @@ function Card3D() {
       currentFlip.current += diff * Math.min(delta * 6, 1);
     }
 
-    // Gentle idle oscillation + flip
-    groupRef.current.rotation.y = currentFlip.current + Math.sin(Date.now() * 0.0003) * 0.04;
+    // Smooth mouse-reactive tilt
+    const lerpFactor = Math.min(delta * 4, 1);
+    smoothTiltX.current += (-state.pointer.y * 0.1 - smoothTiltX.current) * lerpFactor;
+    smoothTiltY.current += (state.pointer.x * 0.08 - smoothTiltY.current) * lerpFactor;
+
+    groupRef.current.rotation.x = smoothTiltX.current;
+    groupRef.current.rotation.y = currentFlip.current + Math.sin(Date.now() * 0.0003) * 0.04 + smoothTiltY.current;
     groupRef.current.position.y = Math.sin(Date.now() * 0.001) * 0.03;
     groupRef.current.rotation.z = Math.sin(Date.now() * 0.0007) * 0.02;
+
+    // Holographic iridescence animation
+    if (config.material === 'holographic') {
+      const t = Date.now() * 0.001;
+      const range: [number, number] = [100 + Math.sin(t) * 50, 400 + Math.cos(t * 0.7) * 100];
+      if (frontMatRef.current) frontMatRef.current.iridescenceThicknessRange = range;
+      if (backMatRef.current) backMatRef.current.iridescenceThicknessRange = range;
+    }
   });
 
   const edgeColor = useMemo(() => {
@@ -265,12 +292,12 @@ function Card3D() {
 
       {/* Front face — ShapeGeometry clips to rounded-rect, UVs normalized to 0-1 */}
       <mesh geometry={faceGeometry} position={[0, 0, CARD_D / 2 + 0.001]}>
-        <meshPhysicalMaterial map={frontTex} {...matProps} side={THREE.FrontSide} />
+        <meshPhysicalMaterial ref={frontMatRef} map={frontTex} {...matProps} side={THREE.FrontSide} />
       </mesh>
 
       {/* Back face — rotated 180° on Y axis */}
       <mesh geometry={faceGeometry} position={[0, 0, -CARD_D / 2 - 0.001]} rotation={[0, Math.PI, 0]}>
-        <meshPhysicalMaterial map={backTex} {...matProps} side={THREE.FrontSide} />
+        <meshPhysicalMaterial ref={backMatRef} map={backTex} {...matProps} side={THREE.FrontSide} />
       </mesh>
     </group>
   );
@@ -412,11 +439,24 @@ export default function CenterPanel() {
 
   const handleCopyConfig = useCallback(async () => {
     const configJson = JSON.stringify(config, null, 2);
-    await navigator.clipboard.writeText(configJson);
-    showToast('Config copied to clipboard');
+    try {
+      await navigator.clipboard.writeText(configJson);
+      showToast('Config copied to clipboard');
+    } catch {
+      // Fallback for non-HTTPS or older browsers
+      const ta = document.createElement('textarea');
+      ta.value = configJson;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Config copied to clipboard');
+    }
   }, [config, showToast]);
 
-  const handleShareLink = useCallback(() => {
+  const handleShareLink = useCallback(async () => {
     // Strip issuerLogo (base64 data URIs make URLs too long for browsers)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { issuerLogo: _issuerLogo, cardArt: _cardArt, ...shareableConfig } = config;
@@ -425,7 +465,18 @@ export default function CenterPanel() {
     if (url.length > 2000) {
       showToast('Warning: Share link is very long and may not work in all browsers');
     }
-    navigator.clipboard.writeText(url);
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
     showToast('Share link copied to clipboard');
   }, [config, showToast]);
 
@@ -446,55 +497,92 @@ export default function CenterPanel() {
     setExportReady(true);
   }, []);
 
+  const scene = config.renderScene;
+
   return (
     <div className="flex-1 flex flex-col h-full relative">
-      {/* 3D Canvas */}
+      {/* Render Scene Selector */}
+      <RenderSceneSelector scene={scene} isDark={isDark} />
+
+      {/* Scene Content */}
       <div className="flex-1 relative" style={{ background: isDark ? '#1a1a1a' : '#e8ecf1' }}>
-        <CanvasErrorBoundary>
-          <Canvas
-            gl={{ preserveDrawingBuffer: true, antialias: true }}
-            camera={{ position: [0.2, 0.15, 6.5], fov: 32 }}
-            frameloop="always"
-          >
-            <color attach="background" args={isDark ? [BG_DARK.r, BG_DARK.g, BG_DARK.b] : [BG_LIGHT.r, BG_LIGHT.g, BG_LIGHT.b]} />
+        {scene === '3d' && (
+          <CanvasErrorBoundary>
+            <Canvas
+              dpr={[1, 2]}
+              gl={{ preserveDrawingBuffer: true, antialias: true }}
+              camera={{ position: [0.2, 0.15, 6.5], fov: 32 }}
+              frameloop="always"
+              onCreated={({ gl }) => {
+                gl.toneMapping = THREE.ACESFilmicToneMapping;
+                gl.toneMappingExposure = 1.1;
+              }}
+            >
+              <color attach="background" args={isDark ? [BG_DARK.r, BG_DARK.g, BG_DARK.b] : [BG_LIGHT.r, BG_LIGHT.g, BG_LIGHT.b]} />
 
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[3, 4, 5]} intensity={1.2} color="#fff5e6" castShadow />
-            <directionalLight position={[-2, 3, 1]} intensity={0.5} color="#e0e8ff" />
-            <directionalLight position={[0, -1, 4]} intensity={0.4} />
-            <pointLight position={[-1, 2, 5]} intensity={0.3} />
-            <directionalLight position={[-1, 2, -3]} intensity={0.35} color="#c0d0ff" />
-
-            <Card3D key="card3d" />
-
-            <Environment preset="apartment" background={false} />
-
-            <Suspense fallback={null}>
-              <ContactShadows
-                position={[0, -CARD_H / 2 - 0.3, 0]}
-                opacity={isDark ? 0.4 : 0.25}
-                scale={8}
-                blur={2}
-                far={4}
+              <ambientLight intensity={0.5} />
+              <directionalLight
+                position={[3, 4, 5]}
+                intensity={1.2}
+                color="#fff5e6"
+                castShadow
+                shadow-mapSize-width={1024}
+                shadow-mapSize-height={1024}
+                shadow-bias={-0.0001}
               />
-            </Suspense>
+              <directionalLight position={[-2, 3, 1]} intensity={0.5} color="#e0e8ff" />
+              <directionalLight position={[0, -1, 4]} intensity={0.4} />
+              <pointLight position={[-1, 2, 5]} intensity={0.3} />
+              <directionalLight position={[-1, 2, -3]} intensity={0.35} color="#c0d0ff" />
+              <directionalLight position={[0, -2, -3]} intensity={0.6} color="#b0c4ff" />
 
-            <OrbitControls
-              enableDamping
-              dampingFactor={0.05}
-              minDistance={1}
-              maxDistance={15}
-            />
-            <ExportHelper onReady={handleExportReady} />
-          </Canvas>
-        </CanvasErrorBoundary>
+              <Card3D key="card3d" />
+
+              <Environment preset="apartment" background={false} />
+
+              <Suspense fallback={null}>
+                <ContactShadows
+                  position={[0, -CARD_H / 2 - 0.3, 0]}
+                  opacity={isDark ? 0.4 : 0.25}
+                  scale={8}
+                  blur={2}
+                  far={4}
+                />
+              </Suspense>
+
+              <OrbitControls
+                enableDamping
+                dampingFactor={0.05}
+                minDistance={1}
+                maxDistance={15}
+              />
+              <ExportHelper onReady={handleExportReady} />
+            </Canvas>
+          </CanvasErrorBoundary>
+        )}
+
+        {(scene === 'wallet-apple' || scene === 'wallet-google') && (
+          <div className="flex-1 flex items-center justify-center h-full overflow-y-auto py-6" data-wallet-preview>
+            <PhoneFrame isDark={config.walletDarkMode}>
+              {scene === 'wallet-apple' ? (
+                <AppleWalletView config={config} />
+              ) : (
+                <GoogleWalletView config={config} />
+              )}
+            </PhoneFrame>
+          </div>
+        )}
+
+        {scene === 'terminal' && (
+          <POSTerminalPreview />
+        )}
       </div>
 
       {/* Toast */}
       {toast && (
         <div
           role="status"
-          aria-live="polite"
+          aria-live="assertive"
           className="absolute top-4 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-lg text-xs font-medium shadow-lg backdrop-blur-sm animate-[fadeInOut_2.2s_ease-in-out] bg-slate-800/90 text-white border border-slate-600/50"
         >
           {toast}
@@ -506,10 +594,89 @@ export default function CenterPanel() {
         <ExportButton onClick={handleExportCard} isDark={isDark} label="Download Card PNG" icon="↓" />
         <ExportButton onClick={handleExportPDF} isDark={isDark} label="Print-Ready PDF (300 DPI)" icon="P" />
         <ExportButton onClick={handleExportSVG} isDark={isDark} label="Download SVG (Figma)" icon="S" />
-        <ExportButton onClick={handleExportWallet} isDark={isDark} label="Download Wallet Mockup" icon="📱" />
-        <ExportButton onClick={handleCopyConfig} isDark={isDark} label="Copy Config" icon="📋" />
-        <ExportButton onClick={handleShareLink} isDark={isDark} label="Share Link" icon="🔗" />
+        {(scene === 'wallet-apple' || scene === 'wallet-google') && (
+          <ExportButton onClick={handleExportWallet} isDark={isDark} label="Download Wallet Mockup" icon="W" />
+        )}
+        <ExportButton onClick={handleCopyConfig} isDark={isDark} label="Copy Config" icon="C" />
+        <ExportButton onClick={handleShareLink} isDark={isDark} label="Share Link" icon="L" />
       </div>
+    </div>
+  );
+}
+
+// ─── Render Scene Selector ───────────────────────────────────
+const SCENE_OPTIONS: { value: RenderScene; label: string; icon: ReactNode }[] = [
+  {
+    value: '3d',
+    label: '3D Card',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 1L12.5 4v6L7 13 1.5 10V4L7 1z" />
+        <path d="M7 1v6m0 6V7m0 0L1.5 4m5.5 3l5.5-3" />
+      </svg>
+    ),
+  },
+  {
+    value: 'wallet-apple',
+    label: 'Apple Wallet',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
+        <rect x="3" y="1" width="8" height="12" rx="1.5" />
+        <line x1="5" y1="3.5" x2="9" y2="3.5" />
+      </svg>
+    ),
+  },
+  {
+    value: 'wallet-google',
+    label: 'Google Wallet',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round">
+        <rect x="3" y="1" width="8" height="12" rx="1.5" />
+        <circle cx="7" cy="7" r="2" />
+      </svg>
+    ),
+  },
+  {
+    value: 'terminal',
+    label: 'Tap to Pay',
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="8" height="9" rx="1" />
+        <path d="M5 1.5a3 3 0 0 1 4 0" />
+        <path d="M6 3.5a1.2 1.2 0 0 1 2 0" />
+      </svg>
+    ),
+  },
+];
+
+function RenderSceneSelector({ scene, isDark }: { scene: RenderScene; isDark: boolean }) {
+  const { updateConfig } = useCardConfig();
+  return (
+    <div className={`flex items-center gap-1 px-3 py-2 border-b ${
+      isDark ? 'border-slate-700/30 bg-slate-900/60' : 'border-slate-200/80 bg-slate-50/60'
+    } backdrop-blur-sm`}>
+      {SCENE_OPTIONS.map(opt => {
+        const active = scene === opt.value;
+        return (
+          <button
+            key={opt.value}
+            onClick={() => updateConfig({ renderScene: opt.value })}
+            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium transition-all ${
+              active
+                ? isDark
+                  ? 'bg-sky-500/20 text-sky-400 border border-sky-500/30'
+                  : 'bg-sky-50 text-sky-600 border border-sky-200'
+                : isDark
+                  ? 'text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-transparent'
+                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent'
+            }`}
+            title={opt.label}
+          >
+            {opt.icon}
+            <span className="hidden sm:inline">{opt.label}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

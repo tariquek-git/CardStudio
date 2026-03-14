@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useCardConfig } from './context';
 import LeftPanel from './components/LeftPanel';
 import CenterPanel from './components/CenterPanel';
-import RightPanel from './components/RightPanel';
 import DesignGallery from './components/DesignGallery';
 
 export default function App() {
@@ -10,13 +9,22 @@ export default function App() {
   const [showGallery, setShowGallery] = useState(false);
   const isDark = config.darkMode;
   const [showLeftPanel, setShowLeftPanel] = useState(false);
-  const [showRightPanel, setShowRightPanel] = useState(false);
+
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (canUndo) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [canUndo]);
 
   // Close drawers on Escape key + undo/redo shortcuts
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       setShowLeftPanel(false);
-      setShowRightPanel(false);
     }
     if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
       e.preventDefault();
@@ -130,22 +138,6 @@ export default function App() {
               </span>
             )}
           </button>
-          {/* Wallet preview toggle (mobile) */}
-          <button
-            onClick={() => setShowRightPanel(!showRightPanel)}
-            className={`xl:hidden p-2 rounded-lg transition-colors ${
-              showRightPanel
-                ? 'bg-sky-500 text-white'
-                : isDark ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'
-            }`}
-            title="Toggle wallet preview"
-            aria-label="Toggle wallet preview"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <rect x="3" y="1" width="10" height="14" rx="2" stroke="currentColor" strokeWidth="1.2" fill="none" />
-              <circle cx="8" cy="13" r="1" />
-            </svg>
-          </button>
           {/* Dark mode toggle */}
           <button
             onClick={() => updateConfig({ darkMode: !isDark })}
@@ -178,7 +170,7 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content - Three Panel Layout */}
+      {/* Main Content - Two Panel Layout */}
       <main className="flex flex-1 overflow-hidden relative">
         {/* Left Panel: always visible on xl+, drawer overlay on smaller */}
         <div
@@ -204,29 +196,6 @@ export default function App() {
         )}
 
         <CenterPanel />
-
-        {/* Right Panel: always visible on xl+, drawer overlay on smaller */}
-        <div
-          className={`
-            ${showRightPanel ? 'translate-x-0' : 'translate-x-full'}
-            xl:translate-x-0 xl:relative
-            fixed inset-y-0 right-0 z-30
-            transition-transform duration-300 ease-in-out
-          `}
-          role={showRightPanel ? 'dialog' : undefined}
-          aria-label={showRightPanel ? 'Wallet preview' : undefined}
-        >
-          <RightPanel />
-        </div>
-
-        {/* Right panel backdrop */}
-        {showRightPanel && (
-          <div
-            className="fixed inset-0 bg-black/40 z-20 xl:hidden"
-            onClick={() => setShowRightPanel(false)}
-            aria-hidden="true"
-          />
-        )}
       </main>
 
       {/* Footer */}

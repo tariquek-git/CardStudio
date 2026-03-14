@@ -10,7 +10,8 @@ import { needsCustomLayout, drawCustomLayout } from './rails/cardLayouts';
 
 // ─── CR80 CARD DIMENSIONS ──────────────────────────────────
 // Real credit card: 85.6mm × 53.98mm (ISO 7810 ID-1)
-// Canvas at ~12 px/mm for retina rendering
+// Logical dimensions at ~12 px/mm; physical pixels = logical × TEX_SCALE
+export const TEX_SCALE = 2;
 const H_WIDTH = 1024;
 const H_HEIGHT = 645;
 const V_WIDTH = 645;
@@ -25,6 +26,12 @@ function getCanvasSize(orientation: 'horizontal' | 'vertical') {
   return orientation === 'horizontal'
     ? { w: H_WIDTH, h: H_HEIGHT }
     : { w: V_WIDTH, h: V_HEIGHT };
+}
+
+// Spatial hash noise for organic grain (replaces Math.random TV static)
+function valueNoise(x: number, y: number): number {
+  const n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
+  return (n - Math.floor(n)) * 2 - 1;
 }
 
 function roundedRect(
@@ -381,17 +388,19 @@ export function drawCardFront(canvas: HTMLCanvasElement, config: CardConfig) {
   }
 
   const { w, h } = getCanvasSize(config.orientation);
+  const pw = w * TEX_SCALE, ph = h * TEX_SCALE;
   // Only reset dimensions when they actually change to avoid
   // clearing the canvas buffer and breaking WebGL texture binding
-  if (canvas.width !== w) canvas.width = w;
-  if (canvas.height !== h) canvas.height = h;
+  if (canvas.width !== pw) canvas.width = pw;
+  if (canvas.height !== ph) canvas.height = ph;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  ctx.clearRect(0, 0, w, h);
+  ctx.clearRect(0, 0, pw, ph);
 
   ctx.save();
+  ctx.scale(TEX_SCALE, TEX_SCALE);
   roundedRect(ctx, 0, 0, w, h, CORNER_RADIUS);
   ctx.clip();
 
@@ -608,15 +617,20 @@ export function drawCardFront(canvas: HTMLCanvasElement, config: CardConfig) {
     }
   }
 
-  // Subtle grain for matte/recycled materials
+  // Subtle grain for matte/recycled materials (uses physical pixel coords)
   if (config.material === 'matte' || config.material === 'recycledPlastic') {
-    const imageData = ctx.getImageData(0, 0, w, h);
+    ctx.restore(); // remove scale transform before pixel manipulation
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d = imageData.data;
+    const pixW = canvas.width;
     for (let i = 0; i < d.length; i += 4) {
-      const n = (Math.random() - 0.5) * 12;
+      const px = (i / 4) % pixW;
+      const py = Math.floor((i / 4) / pixW);
+      const n = valueNoise(px * 0.5, py * 0.5) * 8;
       d[i] += n; d[i + 1] += n; d[i + 2] += n;
     }
     ctx.putImageData(imageData, 0, 0);
+    return; // already restored
   }
 
   ctx.restore();
@@ -631,15 +645,17 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
   }
 
   const { w, h } = getCanvasSize(config.orientation);
-  if (canvas.width !== w) canvas.width = w;
-  if (canvas.height !== h) canvas.height = h;
+  const pw = w * TEX_SCALE, ph = h * TEX_SCALE;
+  if (canvas.width !== pw) canvas.width = pw;
+  if (canvas.height !== ph) canvas.height = ph;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  ctx.clearRect(0, 0, w, h);
+  ctx.clearRect(0, 0, pw, ph);
 
   ctx.save();
+  ctx.scale(TEX_SCALE, TEX_SCALE);
   roundedRect(ctx, 0, 0, w, h, CORNER_RADIUS);
   ctx.clip();
 
@@ -770,15 +786,20 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
     ctx.drawImage(logoImg, rect.x, rect.y, rect.width, rect.height);
   }
 
-  // Subtle grain for matte/recycled materials
+  // Subtle grain for matte/recycled materials (uses physical pixel coords)
   if (config.material === 'matte' || config.material === 'recycledPlastic') {
-    const imageData = ctx.getImageData(0, 0, w, h);
+    ctx.restore(); // remove scale transform before pixel manipulation
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const d = imageData.data;
+    const pixW = canvas.width;
     for (let i = 0; i < d.length; i += 4) {
-      const n = (Math.random() - 0.5) * 12;
+      const px = (i / 4) % pixW;
+      const py = Math.floor((i / 4) / pixW);
+      const n = valueNoise(px * 0.5, py * 0.5) * 8;
       d[i] += n; d[i + 1] += n; d[i + 2] += n;
     }
     ctx.putImageData(imageData, 0, 0);
+    return; // already restored
   }
 
   ctx.restore();

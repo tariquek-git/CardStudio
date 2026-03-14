@@ -1,6 +1,7 @@
 import type { CardConfig } from '../types';
 import type { PaymentRail } from './types';
 import { getRail } from './index';
+import { TEX_SCALE } from '../cardCanvas';
 
 // Canvas constants (must match cardCanvas.ts)
 const H_WIDTH = 1024;
@@ -46,14 +47,16 @@ export function drawCustomLayout(
   if (!rail || rail.cardFormFactor === 'standard_card') return false;
 
   const { w, h } = getSize(config.orientation);
-  if (canvas.width !== w) canvas.width = w;
-  if (canvas.height !== h) canvas.height = h;
+  const pw = w * TEX_SCALE, ph = h * TEX_SCALE;
+  if (canvas.width !== pw) canvas.width = pw;
+  if (canvas.height !== ph) canvas.height = ph;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return false;
 
-  ctx.clearRect(0, 0, w, h);
+  ctx.clearRect(0, 0, pw, ph);
   ctx.save();
+  ctx.scale(TEX_SCALE, TEX_SCALE);
   roundedRect(ctx, 0, 0, w, h, CORNER_RADIUS);
   ctx.clip();
 

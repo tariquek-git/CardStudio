@@ -12,10 +12,15 @@ function generateThumbnail(config: SavedDesign['config']): Promise<string> {
     Promise.all([
       document.fonts.ready,
       ensureLogosLoaded(config.issuerLogo, config.cardArt),
-    ]).then(() => {
-      drawCardFront(canvas, config);
-      resolve(canvas.toDataURL('image/png', 0.7));
-    });
+    ])
+      .then(() => {
+        drawCardFront(canvas, config);
+        resolve(canvas.toDataURL('image/png', 0.7));
+      })
+      .catch(() => {
+        // If thumbnail generation fails, return empty string (placeholder will show)
+        resolve('');
+      });
   });
 }
 
@@ -329,7 +334,7 @@ function DesignCard({
         )}
         <div className="flex items-center justify-between mt-1">
           <span className={`text-[9px] ${textSecondary}`}>{dateStr}</span>
-          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-0.5">
             <ActionBtn
               title="Rename"
               isDark={isDark}

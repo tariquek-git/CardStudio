@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 645" width="1024" height="645">
+  <g stroke="white" fill="none" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Horizontal traces -->
+    <line x1="0" y1="100" x2="200" y2="100" opacity="0.08"/>
+    <line x1="250" y1="100" x2="500" y2="100" opacity="0.06"/>
+    <line x1="0" y1="200" x2="150" y2="200" opacity="0.07"/>
+    <line x1="300" y1="200" x2="600" y2="200" opacity="0.05"/>
+    <line x1="0" y1="300" x2="350" y2="300" opacity="0.06"/>
+    <line x1="400" y1="300" x2="700" y2="300" opacity="0.08"/>
+    <line x1="0" y1="400" x2="250" y2="400" opacity="0.05"/>
+    <line x1="500" y1="400" x2="800" y2="400" opacity="0.07"/>
+    <line x1="0" y1="500" x2="400" y2="500" opacity="0.06"/>
+    <line x1="600" y1="500" x2="1024" y2="500" opacity="0.05"/>
+    <!-- Vertical traces -->
+    <line x1="200" y1="100" x2="200" y2="250" opacity="0.07"/>
+    <line x1="500" y1="50" x2="500" y2="200" opacity="0.06"/>
+    <line x1="350" y1="300" x2="350" y2="450" opacity="0.05"/>
+    <line x1="700" y1="200" x2="700" y2="400" opacity="0.07"/>
+    <line x1="800" y1="350" x2="800" y2="550" opacity="0.06"/>
+    <line x1="150" y1="200" x2="150" y2="350" opacity="0.05"/>
+    <line x1="600" y1="400" x2="600" y2="600" opacity="0.06"/>
+    <line x1="900" y1="100" x2="900" y2="300" opacity="0.05"/>
+    <!-- Right-angle bends -->
+    <polyline points="200,250 300,250 300,200" opacity="0.07"/>
+    <polyline points="500,200 500,300 400,300" opacity="0.06"/>
+    <polyline points="700,400 700,500 600,500" opacity="0.05"/>
+    <polyline points="800,550 900,550 900,500" opacity="0.06"/>
+    <polyline points="150,350 250,350 250,400" opacity="0.05"/>
+    <!-- IC pads -->
+    <rect x="195" y="95" width="10" height="10" rx="1" fill="white" opacity="0.10"/>
+    <rect x="495" y="95" width="10" height="10" rx="1" fill="white" opacity="0.08"/>
+    <rect x="345" y="295" width="10" height="10" rx="1" fill="white" opacity="0.08"/>
+    <rect x="695" y="295" width="10" height="10" rx="1" fill="white" opacity="0.10"/>
+    <rect x="795" y="395" width="10" height="10" rx="1" fill="white" opacity="0.08"/>
+    <rect x="595" y="495" width="10" height="10" rx="1" fill="white" opacity="0.06"/>
+    <rect x="895" y="195" width="10" height="10" rx="1" fill="white" opacity="0.06"/>
+    <!-- Small vias (dots) -->
+    <circle cx="250" cy="100" r="3" fill="white" opacity="0.10"/>
+    <circle cx="300" cy="200" r="3" fill="white" opacity="0.08"/>
+    <circle cx="400" cy="300" r="3" fill="white" opacity="0.08"/>
+    <circle cx="600" cy="200" r="3" fill="white" opacity="0.06"/>
+    <circle cx="500" cy="400" r="3" fill="white" opacity="0.06"/>
+    <circle cx="800" cy="400" r="3" fill="white" opacity="0.08"/>
+    <circle cx="150" cy="200" r="3" fill="white" opacity="0.06"/>
+  </g>
+</svg>

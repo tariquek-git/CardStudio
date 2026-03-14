@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 645" width="1024" height="645">
+  <defs>
+    <pattern id="ch" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="white" stroke-width="0.5" opacity="0.08"/>
+    </pattern>
+    <pattern id="ch2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <line x1="0" y1="0" x2="0" y2="20" stroke="white" stroke-width="0.5" opacity="0.08"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="645" fill="url(#ch)"/>
+  <rect width="1024" height="645" fill="url(#ch2)"/>
+</svg>

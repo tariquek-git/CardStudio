@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 50">
+  <path d="M8 2h20c2 0 3 1.5 2.5 3.5L23 44.5c-.5 2-2.5 3.5-4.5 3.5H0c-2 0-2.5-1.5-2-3.5L5.5 5.5C6 3.5 6 2 8 2z" fill="#E21836" transform="translate(5,0)"/>
+  <path d="M24 2h22c2 0 3 1.5 2.5 3.5L41 44.5c-.5 2-2.5 3.5-4.5 3.5H16c-2 0-2.5-1.5-2-3.5L21.5 5.5C22 3.5 22 2 24 2z" fill="#00447C" transform="translate(5,0)"/>
+  <path d="M42 2h20c2 0 3 1.5 2.5 3.5L57 44.5c-.5 2-2.5 3.5-4.5 3.5H34c-2 0-2.5-1.5-2-3.5L39.5 5.5C40 3.5 40 2 42 2z" fill="#007B84" transform="translate(5,0)"/>
+  <text x="40" y="30" font-family="Arial,sans-serif" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">UnionPay</text>
+</svg>

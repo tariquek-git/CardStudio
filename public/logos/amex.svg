@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 50">
+  <rect width="80" height="50" rx="4" fill="#006FCF"/>
+  <path d="M12.5 18.5h3.2l.7 1.7.7-1.7h3.2v7.6l-2.5-3.8-2.5 3.8V25h-1l-.7-1.7-.7 1.7h-1.2l2-4.7-1.2-2.5z" fill="#FFF" opacity="0"/>
+  <g fill="#FFFFFF">
+    <path d="M7 17h4.5l1 2.3 1-2.3H18l-2.8 6.5H18V33h-4.5l-1-2.3-1 2.3H7l2.8-6.5H7V17z" opacity="0"/>
+  </g>
+  <text x="40" y="24" font-family="Arial,sans-serif" font-size="8" font-weight="bold" fill="#FFF" text-anchor="middle" letter-spacing="0.5">AMERICAN</text>
+  <text x="40" y="33" font-family="Arial,sans-serif" font-size="8" font-weight="bold" fill="#FFF" text-anchor="middle" letter-spacing="0.5">EXPRESS</text>
+</svg>

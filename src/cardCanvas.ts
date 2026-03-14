@@ -378,7 +378,7 @@ function getNetworkLogoRect(
   switch (network) {
     case 'visa':
       // Top-right per Visa brand guidelines
-      return { x: w - 140 - pad, y: pad - 5, width: 140, height: 46 };
+      return { x: w - 160 - pad, y: pad - 5, width: 160, height: 60 };
     case 'amex':
       // Top-right
       return { x: w - 100 - pad, y: pad - 5, width: 100, height: 62 };

@@ -1,6 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 50">
-  <text x="4" y="32" font-family="Arial,sans-serif" font-size="22" font-weight="bold" fill="#231F20" letter-spacing="-0.5">DISCOV</text>
-  <text x="98" y="32" font-family="Arial,sans-serif" font-size="22" font-weight="bold" fill="#231F20" letter-spacing="-0.5">R</text>
-  <circle cx="92" cy="26" r="14" fill="#F47216"/>
-  <text x="115" y="44" font-family="Arial,sans-serif" font-size="7" fill="#231F20">&#174;</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 80">
+  <!-- DISCOVER wordmark with orange circle accent -->
+  <g transform="translate(8,18)">
+    <!-- D -->
+    <path d="M0 0h10c12 0 20 8 20 20s-8 20-20 20H0V0zm7 34h3c8 0 13-5 13-14s-5-14-13-14H7v28z" fill="#231F20"/>
+    <!-- I -->
+    <rect x="36" y="0" width="7" height="40" fill="#231F20"/>
+    <!-- S -->
+    <path d="M50 30c2.5 3 6 5 10 5 4 0 6.5-2 6.5-5S64 26 60 24.5c-5-2-8-4.5-8-10S55.5 5 62 5c4 0 7.5 1.5 10 4l-4 4.5C66.5 11.5 64.5 10.5 62 10.5c-3 0-4.5 1.5-4.5 4S60 18 63.5 19.5c5 2 8 4.5 8 10s-4 10.5-11.5 10.5c-5 0-9-2-12-5.5L50 30z" fill="#231F20"/>
+    <!-- C -->
+    <path d="M78 20c0-11 8-19 18-19 5 0 9 2 12.5 5l-4.5 5c-2-2.5-4.5-4-8-4-6.5 0-11 5.5-11 13s4.5 13 11 13c3.5 0 6-1.5 8-4l4.5 5C105 37 101 39 96 39c-10 0-18-8-18-19z" fill="#231F20"/>
+    <!-- O (orange circle - the iconic Discover element) -->
+    <circle cx="125" cy="20" r="14" fill="#F47216"/>
+    <!-- V -->
+    <path d="M143 0h6l9 30 9-30h6L161 40h-6L143 0z" fill="#231F20"/>
+    <!-- E -->
+    <path d="M176 0v40h22v-6h-15v-10h14v-6h-14V6h15V0h-22z" fill="#231F20"/>
+    <!-- R -->
+    <path d="M203 0h8c6 0 9 3 9 8.5 0 4-2 7-6 8.5l7 23h-7l-6-22h-1.5V40H203V0zm3.5 13h4c3.5 0 5.5-1.5 5.5-5s-2-4.5-5.5-4.5h-4v9.5z" fill="#231F20"/>
+  </g>
 </svg>

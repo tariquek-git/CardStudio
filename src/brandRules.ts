@@ -48,10 +48,14 @@ function getEffectiveBgColor(config: CardConfig): string {
   return config.solidColor;
 }
 
-// For gradient mode, returns all stop colors so contrast can be checked against each
+// For gradient/preset-gradient modes, returns all colors so contrast can be checked against each
 function getEffectiveBgColors(config: CardConfig): string[] {
   if (config.colorMode === 'gradient' && config.gradientConfig.stops.length > 1) {
     return config.gradientConfig.stops.map(s => s.color);
+  }
+  if (config.colorMode === 'preset') {
+    const preset = presetColors[config.presetColor];
+    if (preset?.gradient) return preset.gradient;
   }
   return [getEffectiveBgColor(config)];
 }

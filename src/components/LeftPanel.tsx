@@ -995,14 +995,14 @@ function CardArtSection({
                   ? 'ring-2 ring-sky-400 ring-offset-1'
                   : `border ${isDark ? 'border-slate-700/50' : 'border-slate-200'}`
               }`}
+              style={sa.src ? { background: 'linear-gradient(135deg, #1e3a5f, #2d1b4e)' } : undefined}
               title={sa.label}
             >
               {sa.src ? (
                 <img
                   src={sa.src}
                   alt={sa.label}
-                  className="w-full h-full object-cover"
-                  style={{ background: 'linear-gradient(135deg, #1e3a5f, #2d1b4e)' }}
+                  className="w-full h-full object-contain"
                 />
               ) : (
                 <div className={`w-full h-full ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`} />

@@ -566,6 +566,68 @@ export default function LeftPanel() {
         </div>
       </Section>
 
+      <Divider isDark={isDark} />
+
+      {/* ═══════════ CARD BACK (collapsed by default) ═══════════ */}
+      <Section title="CARD BACK" badge="Advanced" defaultOpen={false} isDark={isDark}>
+        <div className="space-y-4">
+          <Toggle
+            checked={config.backShowMagStripe !== false}
+            onChange={v => updateConfig({ backShowMagStripe: v })}
+            label="Magnetic Stripe"
+            isDark={isDark}
+          />
+
+          <Toggle
+            checked={config.backShowSignatureStrip !== false}
+            onChange={v => updateConfig({ backShowSignatureStrip: v })}
+            label="Signature Strip & CVV"
+            isDark={isDark}
+          />
+
+          <Toggle
+            checked={config.backShowHologram !== false}
+            onChange={v => updateConfig({ backShowHologram: v })}
+            label="Security Hologram"
+            isDark={isDark}
+          />
+
+          <LabeledInput
+            label="Support Phone"
+            value={config.backSupportPhone ?? '1-800-XXX-XXXX'}
+            onChange={backSupportPhone => updateConfig({ backSupportPhone })}
+            placeholder="1-800-XXX-XXXX"
+            isDark={isDark}
+          />
+
+          <LabeledInput
+            label="Support URL"
+            value={config.backSupportUrl ?? ''}
+            onChange={backSupportUrl => updateConfig({ backSupportUrl })}
+            placeholder="support.example.com"
+            isDark={isDark}
+          />
+
+          <div>
+            <Label isDark={isDark}>Custom Legal Text</Label>
+            <textarea
+              value={config.backLegalText ?? ''}
+              onChange={e => updateConfig({ backLegalText: e.target.value })}
+              placeholder="Leave empty for default text"
+              rows={3}
+              className={`w-full px-2.5 py-1.5 text-[11px] rounded-md border outline-none resize-none transition-colors ${
+                isDark
+                  ? 'bg-slate-800/60 border-slate-600/50 text-slate-200 placeholder:text-slate-600 focus:border-sky-500/50'
+                  : 'bg-white border-slate-200 text-slate-800 placeholder:text-slate-400 focus:border-sky-400'
+              }`}
+            />
+            <p className={`text-[10px] mt-1 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+              Replaces default &quot;This card is property of...&quot; text
+            </p>
+          </div>
+        </div>
+      </Section>
+
       {/* Bottom spacer */}
       <div className="h-4" />
     </div>

@@ -34,6 +34,23 @@ function valueNoise(x: number, y: number): number {
   return (n - Math.floor(n)) * 2 - 1;
 }
 
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const words = text.split(' ');
+  const lines: string[] = [];
+  let line = '';
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
 function roundedRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -669,55 +686,95 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
 
   const isH = config.orientation === 'horizontal';
   const textColor = getTextColor(config);
+  const showMagStripe = config.backShowMagStripe !== false;
+  const showSigStrip = config.backShowSignatureStrip !== false;
+
+  // Track vertical cursor for flexible layout
+  let cursorY = Math.round(h * 0.10);
+
   // Magnetic Stripe (thick, prominent — per references)
-  const stripeY = Math.round(h * 0.10);
-  const stripeH = Math.round(h * 0.18);
-  ctx.fillStyle = '#1a1a1a';
-  ctx.fillRect(0, stripeY, w, stripeH);
-
-  // Signature Strip (below mag stripe, prominent)
-  const sigY = stripeY + stripeH + Math.round(h * 0.08);
-  const sigX = Math.round(w * 0.06);
-  const sigW = Math.round(w * 0.60);
-  const sigH = Math.round(h * 0.14);
-  ctx.fillStyle = '#f0ece0';
-  ctx.fillRect(sigX, sigY, sigW, sigH);
-
-  // Signature strip hatching
-  ctx.strokeStyle = '#ddd8cc';
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i < sigW; i += 6) {
-    ctx.beginPath();
-    ctx.moveTo(sigX + i, sigY);
-    ctx.lineTo(sigX + i + 20, sigY + sigH);
-    ctx.stroke();
+  if (showMagStripe) {
+    const stripeH = Math.round(h * 0.18);
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, cursorY, w, stripeH);
+    cursorY += stripeH + Math.round(h * 0.08);
+  } else {
+    cursorY += Math.round(h * 0.08);
   }
 
-  // CVV white box (right of signature strip)
-  const cvvGap = Math.round(w * 0.02);
-  const cvvX = sigX + sigW + cvvGap;
-  const cvvW = Math.round(w * 0.12);
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(cvvX, sigY, cvvW, sigH);
-  ctx.font = `bold ${isH ? 24 : 18}px ${CARD_SANS}`;
-  ctx.fillStyle = '#333333';
-  ctx.textBaseline = 'middle';
-  ctx.textAlign = 'center';
-  ctx.fillText(getCvvDisplay(config.network), cvvX + cvvW / 2, sigY + sigH / 2);
-  ctx.textAlign = 'start';
-  ctx.textBaseline = 'top';
+  const sigX = Math.round(w * 0.06);
 
-  // Fine Print (below signature area)
-  const finePrintY = sigY + sigH + Math.round(h * 0.06);
+  // Signature Strip + CVV
+  if (showSigStrip) {
+    const sigW = Math.round(w * 0.60);
+    const sigH = Math.round(h * 0.14);
+    ctx.fillStyle = '#f0ece0';
+    ctx.fillRect(sigX, cursorY, sigW, sigH);
+
+    // Signature strip hatching
+    ctx.strokeStyle = '#ddd8cc';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < sigW; i += 6) {
+      ctx.beginPath();
+      ctx.moveTo(sigX + i, cursorY);
+      ctx.lineTo(sigX + i + 20, cursorY + sigH);
+      ctx.stroke();
+    }
+
+    // CVV white box (right of signature strip)
+    const cvvGap = Math.round(w * 0.02);
+    const cvvX = sigX + sigW + cvvGap;
+    const cvvW = Math.round(w * 0.12);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(cvvX, cursorY, cvvW, sigH);
+    ctx.font = `bold ${isH ? 24 : 18}px ${CARD_SANS}`;
+    ctx.fillStyle = '#333333';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillText(getCvvDisplay(config.network), cvvX + cvvW / 2, cursorY + sigH / 2);
+    ctx.textAlign = 'start';
+    ctx.textBaseline = 'top';
+    cursorY += sigH + Math.round(h * 0.06);
+  } else {
+    cursorY += Math.round(h * 0.04);
+  }
+
+  // Fine Print
   const fpX = sigX;
+  let fpY = cursorY;
   ctx.font = `300 11px ${CARD_SANS}`;
   ctx.fillStyle = textColor;
   ctx.globalAlpha = 0.6;
-  ctx.fillText(`This card is property of ${config.issuerName}.`, fpX, finePrintY);
-  ctx.fillText(`Issued pursuant to license by ${networkNames[config.network]}.`, fpX, finePrintY + 16);
-  ctx.fillText('Unauthorized use is prohibited.', fpX, finePrintY + 32);
+
+  // Custom legal text or default
+  const legalText = config.backLegalText?.trim();
+  if (legalText) {
+    // Word-wrap custom legal text
+    const maxW = w - sigX * 2;
+    const lines = wrapText(ctx, legalText, maxW);
+    for (const line of lines) {
+      ctx.fillText(line, fpX, fpY);
+      fpY += 14;
+    }
+  } else {
+    ctx.fillText(`This card is property of ${config.issuerName}.`, fpX, fpY);
+    ctx.fillText(`Issued pursuant to license by ${networkNames[config.network]}.`, fpX, fpY + 16);
+    ctx.fillText('Unauthorized use is prohibited.', fpX, fpY + 32);
+    fpY += 48;
+  }
+
+  // Support phone
+  const supportPhone = config.backSupportPhone?.trim() || '1-800-XXX-XXXX';
   ctx.font = `400 12px ${CARD_SANS}`;
-  ctx.fillText('Customer Service: 1-800-XXX-XXXX', fpX, finePrintY + 56);
+  ctx.fillText(`Customer Service: ${supportPhone}`, fpX, fpY + 8);
+  fpY += 24;
+
+  // Support URL
+  if (config.backSupportUrl?.trim()) {
+    ctx.fillText(config.backSupportUrl.trim(), fpX, fpY + 8);
+    fpY += 16;
+  }
+
   ctx.globalAlpha = 1;
 
   // Program name (if set)
@@ -725,14 +782,14 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
     ctx.font = `600 14px ${CARD_SANS}`;
     ctx.fillStyle = textColor;
     ctx.globalAlpha = 0.8;
-    ctx.fillText(config.programName.toUpperCase(), fpX, finePrintY + 76);
+    ctx.fillText(config.programName.toUpperCase(), fpX, fpY + 12);
     ctx.globalAlpha = 1;
   }
 
   // Back-only number: render card number, name & expiry below fine print
   if (!config.numberless && (config.numberPosition ?? 'standard') === 'back-only') {
     const number = getCardNumber(config.network, config.cardNumberDisplay, config.customCardNumber);
-    const backNumY = finePrintY + (config.programName ? 100 : 76);
+    const backNumY = fpY + (config.programName ? 28 : 12);
     ctx.globalAlpha = 0.7;
     if (number) {
       ctx.font = `500 ${isH ? 18 : 14}px ${CARD_MONO}`;
@@ -750,16 +807,18 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
   }
 
   // Security hologram sticker
-  const holoX = isH ? w - 100 : w - 80;
-  const holoY = isH ? h - 80 : h - 70;
-  const holoSize = isH ? 40 : 32;
-  const holoGrad = ctx.createLinearGradient(holoX, holoY, holoX + holoSize, holoY + holoSize);
-  holoGrad.addColorStop(0, 'rgba(168, 85, 247, 0.4)');
-  holoGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.4)');
-  holoGrad.addColorStop(1, 'rgba(16, 185, 129, 0.4)');
-  ctx.fillStyle = holoGrad;
-  roundedRect(ctx, holoX, holoY, holoSize, holoSize, 4);
-  ctx.fill();
+  if (config.backShowHologram !== false) {
+    const holoX = isH ? w - 100 : w - 80;
+    const holoY = isH ? h - 80 : h - 70;
+    const holoSize = isH ? 40 : 32;
+    const holoGrad = ctx.createLinearGradient(holoX, holoY, holoX + holoSize, holoY + holoSize);
+    holoGrad.addColorStop(0, 'rgba(168, 85, 247, 0.4)');
+    holoGrad.addColorStop(0.5, 'rgba(59, 130, 246, 0.4)');
+    holoGrad.addColorStop(1, 'rgba(16, 185, 129, 0.4)');
+    ctx.fillStyle = holoGrad;
+    roundedRect(ctx, holoX, holoY, holoSize, holoSize, 4);
+    ctx.fill();
+  }
 
   // Back-of-card ATM network logos (Cirrus, Plus, STAR, Pulse)
   if (config.backLogos && config.backLogos.length > 0) {

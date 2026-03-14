@@ -77,6 +77,13 @@ export interface CardConfig {
   programName: string;
   renderScene: RenderScene;
   backLogos: BackLogo[];
+  // Card back customization
+  backSupportPhone: string;
+  backSupportUrl: string;
+  backLegalText: string;
+  backShowMagStripe: boolean;
+  backShowSignatureStrip: boolean;
+  backShowHologram: boolean;
   darkMode: boolean;
 }
 
@@ -131,5 +138,11 @@ export const defaultConfig: CardConfig = {
   programName: '',
   renderScene: '3d',
   backLogos: [],
+  backSupportPhone: '1-800-XXX-XXXX',
+  backSupportUrl: '',
+  backLegalText: '',
+  backShowMagStripe: true,
+  backShowSignatureStrip: true,
+  backShowHologram: true,
   darkMode: true,
 };

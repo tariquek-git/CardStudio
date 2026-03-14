@@ -40,6 +40,10 @@ export interface GradientConfig {
   angle: number; // 0-360 degrees
 }
 
+export type IssuerType = 'bank' | 'credit_union' | 'fintech' | 'other';
+
+export type SecondaryNetwork = '' | 'star' | 'pulse' | 'nyce' | 'accel' | 'shazam' | 'interlink' | 'maestro';
+
 export interface CardConfig {
   // Payment rail (new system — backward compat: railId defaults to network value)
   railId: string;
@@ -85,6 +89,21 @@ export interface CardConfig {
   backShowSignatureStrip: boolean;
   backShowHologram: boolean;
   darkMode: boolean;
+  // ── Program Compliance Fields ──
+  issuingCountry: string;         // ISO 3166-1 alpha-2 (US, CA, GB, DE, etc.)
+  issuerType: IssuerType;
+  binRange: string;               // 6-8 digit BIN/IIN prefix
+  currency: string;               // ISO 4217 code (USD, EUR, CAD, etc.)
+  fdicInsured: boolean;           // US bank FDIC notice
+  ncuaInsured: boolean;           // US credit union NCUA notice
+  secondaryNetwork: SecondaryNetwork; // Durbin routing — 2nd unaffiliated network
+  coBrandPartner: string;         // co-brand partner name
+  coBrandLogo: string | null;     // co-brand partner logo (data URL)
+  dualInterfaceBadge: boolean;    // show DEBIT/CREDIT badge on front
+  memberSince: string;            // separate from expiry, format YYYY
+  cardLevelBadge: string;         // custom tier badge text override
+  issuerAddress: string;          // issuer address for card back
+  bilingualRequired: boolean;     // Canadian bilingual requirement
 }
 
 export interface SavedDesign {
@@ -145,4 +164,19 @@ export const defaultConfig: CardConfig = {
   backShowSignatureStrip: true,
   backShowHologram: true,
   darkMode: true,
+  // Program Compliance defaults
+  issuingCountry: 'US',
+  issuerType: 'bank',
+  binRange: '',
+  currency: 'USD',
+  fdicInsured: false,
+  ncuaInsured: false,
+  secondaryNetwork: '',
+  coBrandPartner: '',
+  coBrandLogo: null,
+  dualInterfaceBadge: false,
+  memberSince: '',
+  cardLevelBadge: '',
+  issuerAddress: '',
+  bilingualRequired: false,
 };

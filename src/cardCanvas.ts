@@ -543,6 +543,49 @@ export function drawCardFront(canvas: HTMLCanvasElement, config: CardConfig) {
     }
   }
 
+  // ── Card Level Badge (below tier, near network logo) ──
+  if (config.cardLevelBadge) {
+    const tierInfo = networkTierConfig[config.network]?.find(t => t.id === config.tier);
+    const badgeY = logoRect.y + logoRect.height + (tierInfo ? (isH ? 22 : 18) : (isH ? 8 : 6));
+    ctx.font = `700 ${isH ? 10 : 8}px ${CARD_SANS}`;
+    ctx.fillStyle = subTextColor;
+    ctx.letterSpacing = '1.5px';
+    ctx.textAlign = 'right';
+    ctx.fillText(config.cardLevelBadge.toUpperCase(), logoRect.x + logoRect.width, badgeY);
+    ctx.textAlign = 'left';
+    ctx.letterSpacing = '0px';
+  }
+
+  // ── Dual Interface Badge (DEBIT/CREDIT near top-right area) ──
+  if (config.dualInterfaceBadge) {
+    const badgeText = config.cardType.toUpperCase();
+    ctx.font = `700 ${isH ? 11 : 9}px ${CARD_SANS}`;
+    ctx.letterSpacing = '2px';
+    ctx.fillStyle = textColor;
+    ctx.globalAlpha = 0.6;
+    const badgeX = isH ? w - pad - ctx.measureText(badgeText).width : w - pad - ctx.measureText(badgeText).width;
+    const badgeY = isH ? h - pad - 10 : h - pad - 8;
+    ctx.fillText(badgeText, badgeX, badgeY);
+    ctx.globalAlpha = 1;
+    ctx.letterSpacing = '0px';
+  }
+
+  // ── Co-Brand Logo (bottom-left on front) ──
+  if (config.coBrandLogo) {
+    const cbImg = logoCache[config.coBrandLogo];
+    if (cbImg?.complete && cbImg.naturalWidth > 0) {
+      const cbH = isH ? 36 : 28;
+      const cbW = (cbImg.naturalWidth / cbImg.naturalHeight) * cbH;
+      ctx.drawImage(cbImg, pad, h - pad - cbH, cbW, cbH);
+    }
+  } else if (config.coBrandPartner) {
+    ctx.font = `600 ${isH ? 12 : 10}px ${CARD_SANS}`;
+    ctx.fillStyle = subTextColor;
+    ctx.letterSpacing = '1px';
+    ctx.fillText(config.coBrandPartner.toUpperCase(), pad, h - pad - (isH ? 8 : 6));
+    ctx.letterSpacing = '0px';
+  }
+
   // ── Row 2: EMV Chip + Contactless (vertically centered upper zone) ──
   const chipW = 120;
   const chipH = 105;
@@ -577,8 +620,13 @@ export function drawCardFront(canvas: HTMLCanvasElement, config: CardConfig) {
       const expiryBlockRight = isH ? w - pad - 140 : w - pad - 100;
       ctx.font = `500 ${isH ? 10 : 9}px ${CARD_SANS}`;
       ctx.fillStyle = subTextColor;
-      ctx.fillText('VALID', expiryBlockRight, bottomY - 1);
-      ctx.fillText('THRU', expiryBlockRight, bottomY + (isH ? 12 : 10));
+      if (config.bilingualRequired) {
+        ctx.fillText('VALIDE', expiryBlockRight, bottomY - 1);
+        ctx.fillText('JUSQU\u2019AU', expiryBlockRight, bottomY + (isH ? 12 : 10));
+      } else {
+        ctx.fillText('VALID', expiryBlockRight, bottomY - 1);
+        ctx.fillText('THRU', expiryBlockRight, bottomY + (isH ? 12 : 10));
+      }
       ctx.font = `600 ${isH ? 22 : 17}px ${CARD_MONO}`;
       const labelW = isH ? 40 : 34;
       drawEmbossedText(ctx, config.expiryDate, expiryBlockRight + labelW, bottomY, textColor, isLightText);
@@ -775,6 +823,32 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
     fpY += 16;
   }
 
+  // Issuer address
+  if (config.issuerAddress?.trim()) {
+    ctx.font = `300 10px ${CARD_SANS}`;
+    ctx.fillText(config.issuerAddress.trim(), fpX, fpY + 8);
+    fpY += 14;
+  }
+
+  // FDIC / NCUA notice
+  if (config.fdicInsured) {
+    ctx.font = `600 10px ${CARD_SANS}`;
+    ctx.fillText('Member FDIC', fpX, fpY + 10);
+    fpY += 16;
+  }
+  if (config.ncuaInsured) {
+    ctx.font = `600 10px ${CARD_SANS}`;
+    ctx.fillText('Federally Insured by NCUA', fpX, fpY + 10);
+    fpY += 16;
+  }
+
+  // Bilingual labels (Canadian requirement)
+  if (config.bilingualRequired) {
+    ctx.font = `300 9px ${CARD_SANS}`;
+    ctx.fillText('SERVICE \u00C0 LA CLIENT\u00C8LE / CUSTOMER SERVICE', fpX, fpY + 10);
+    fpY += 14;
+  }
+
   ctx.globalAlpha = 1;
 
   // Program name (if set)
@@ -865,12 +939,13 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
 }
 
 // Ensure logos are loaded before first draw
-export async function ensureLogosLoaded(issuerLogo?: string | null, cardArt?: string | null): Promise<void> {
+export async function ensureLogosLoaded(issuerLogo?: string | null, cardArt?: string | null, coBrandLogo?: string | null): Promise<void> {
   const promises = networks.map(n => loadLogo(`/logos/${n}.svg`));
   promises.push(loadLogo('/logos/visa-white.svg'));
   for (const id of backLogoIds) promises.push(loadLogo(`/logos/${id}.svg`));
   if (issuerLogo) promises.push(loadLogo(issuerLogo));
   if (cardArt) promises.push(loadLogo(cardArt));
+  if (coBrandLogo) promises.push(loadLogo(coBrandLogo));
   await Promise.all(promises);
 }
 

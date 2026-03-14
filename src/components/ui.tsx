@@ -208,7 +208,7 @@ export function Section({
   indent = true,
 }: {
   title: string;
-  badge?: string | number;
+  badge?: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
   isDark: boolean;
@@ -231,12 +231,14 @@ export function Section({
           }`}>
             {title}
           </span>
-          {badge !== undefined && (
-            <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${
-              isDark ? 'bg-slate-700 text-slate-300' : 'bg-slate-200 text-slate-500'
-            }`}>
-              {badge}
-            </span>
+          {badge !== undefined && badge !== null && (
+            typeof badge === 'object' ? badge : (
+              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${
+                isDark ? 'bg-slate-700 text-slate-300' : 'bg-slate-200 text-slate-500'
+              }`}>
+                {badge}
+              </span>
+            )
           )}
         </div>
         <svg

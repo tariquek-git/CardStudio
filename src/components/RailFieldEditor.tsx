@@ -32,7 +32,7 @@ export default function RailFieldEditor({ railId, railFields, isDark, onChange }
 
   return (
     <div className="space-y-2.5">
-      <div className={`text-[9px] font-semibold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+      <div className={`text-[10px] font-semibold uppercase tracking-wider ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
         {rail.shortName || rail.name} Fields
       </div>
 
@@ -40,17 +40,17 @@ export default function RailFieldEditor({ railId, railFields, isDark, onChange }
       <div className="flex items-center gap-1.5 mb-2">
         <FormFactorBadge formFactor={rail.cardFormFactor} isDark={isDark} />
         {rail.hasQrCode && (
-          <span className={`text-[8px] px-1.5 py-0.5 rounded ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+          <span className={`text-[9px] px-1.5 py-0.5 rounded ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
             QR Code
           </span>
         )}
         {rail.hasChip && (
-          <span className={`text-[8px] px-1.5 py-0.5 rounded ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+          <span className={`text-[9px] px-1.5 py-0.5 rounded ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
             Chip
           </span>
         )}
         {rail.hasContactless && (
-          <span className={`text-[8px] px-1.5 py-0.5 rounded ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+          <span className={`text-[9px] px-1.5 py-0.5 rounded ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
             NFC
           </span>
         )}
@@ -109,7 +109,7 @@ function FieldInput({
 
   return (
     <div>
-      <label className={`block text-[10px] font-medium mb-0.5 ${labelColor}`}>
+      <label className={`block text-xs font-medium mb-0.5 ${labelColor}`}>
         {field.label}
         {field.required && <span className={isDark ? 'text-sky-400' : 'text-sky-500'}> *</span>}
       </label>
@@ -143,7 +143,7 @@ function FormFactorBadge({ formFactor, isDark }: { formFactor: string; isDark: b
   const color = isDark ? info.color : (lightLabels[formFactor] || lightLabels.standard_card);
 
   return (
-    <span className={`text-[8px] font-semibold px-1.5 py-0.5 rounded ${color}`}>
+    <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded ${color}`}>
       {info.label}
     </span>
   );

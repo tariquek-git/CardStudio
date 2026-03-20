@@ -86,7 +86,7 @@ function ScoreBadge({ score, isDark }: { score: number; isDark: boolean }) {
             strokeLinecap="round"
           />
         </svg>
-        <span className={`absolute inset-0 flex items-center justify-center text-[11px] font-bold ${color}`}>
+        <span className={`absolute inset-0 flex items-center justify-center text-xs font-bold ${color}`}>
           {score}
         </span>
       </div>
@@ -112,21 +112,21 @@ function RuleCard({
         <span className={colors.icon}>{severityIcon(rule.severity)}</span>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-1">
-            <p className={`text-[11px] font-semibold leading-tight ${colors.title}`}>
+            <p className={`text-xs font-semibold leading-tight ${colors.title}`}>
               {rule.title}
             </p>
-            <span className={`shrink-0 text-[8px] font-medium px-1.5 py-0.5 rounded-full ${colors.badge}`}>
+            <span className={`shrink-0 text-[9px] font-medium px-1.5 py-0.5 rounded-full ${colors.badge}`}>
               {rule.jurisdiction}
             </span>
           </div>
-          <p className={`text-[10px] mt-0.5 leading-relaxed ${colors.text}`}>
+          <p className={`text-xs mt-0.5 leading-relaxed ${colors.text}`}>
             {rule.message}
           </p>
 
           {/* Expandable explanation */}
           <button
             onClick={() => setExpanded(!expanded)}
-            className={`text-[9px] mt-1.5 font-medium flex items-center gap-0.5 transition-colors ${
+            className={`text-[10px] mt-1.5 font-medium flex items-center gap-0.5 transition-colors ${
               isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -140,15 +140,15 @@ function RuleCard({
           </button>
 
           {expanded && (
-            <div className={`mt-2 text-[10px] leading-relaxed space-y-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            <div className={`mt-2 text-xs leading-relaxed space-y-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               <p>{rule.explanation}</p>
               {rule.regulationRef && (
-                <p className={`text-[9px] font-mono ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                <p className={`text-[10px] font-mono ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
                   Ref: {rule.regulationRef}
                 </p>
               )}
               {rule.suggestedFix && (
-                <p className={`text-[10px] ${isDark ? 'text-sky-400/80' : 'text-sky-600'}`}>
+                <p className={`text-xs ${isDark ? 'text-sky-400/80' : 'text-sky-600'}`}>
                   Fix: {rule.suggestedFix}
                 </p>
               )}
@@ -159,7 +159,7 @@ function RuleCard({
           {rule.autoFixable && rule.autoFix && onAutoFix && (
             <button
               onClick={() => onAutoFix(rule.autoFix!)}
-              className={`mt-2 text-[10px] font-medium px-2.5 py-1 rounded-md transition-colors ${
+              className={`mt-2 text-xs font-medium px-2.5 py-1 rounded-md transition-colors ${
                 isDark
                   ? 'bg-sky-500/20 text-sky-300 hover:bg-sky-500/30'
                   : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
@@ -184,8 +184,8 @@ export default function CompliancePanel({ isDark }: { isDark: boolean }) {
       <div className={`flex items-center gap-3 px-1 py-2 ${isDark ? 'text-emerald-400/80' : 'text-emerald-600'}`}>
         <ScoreBadge score={100} isDark={isDark} />
         <div>
-          <p className="text-[11px] font-semibold">All checks pass</p>
-          <p className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>No compliance issues found</p>
+          <p className="text-xs font-semibold">All checks pass</p>
+          <p className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>No compliance issues found</p>
         </div>
       </div>
     );
@@ -197,7 +197,7 @@ export default function CompliancePanel({ isDark }: { isDark: boolean }) {
       <div className="flex items-center gap-3">
         <ScoreBadge score={result.score} isDark={isDark} />
         <div className="flex-1">
-          <div className="flex flex-wrap gap-2 text-[10px] font-medium">
+          <div className="flex flex-wrap gap-2 text-xs font-medium">
             {result.errors.length > 0 && (
               <span className={isDark ? 'text-red-400' : 'text-red-600'}>
                 {result.errors.length} error{result.errors.length !== 1 ? 's' : ''}
@@ -214,7 +214,7 @@ export default function CompliancePanel({ isDark }: { isDark: boolean }) {
               </span>
             )}
           </div>
-          <p className={`text-[9px] mt-0.5 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
             {result.passesNetworkCert ? 'Passes network certification' : 'Fails network certification'}
           </p>
         </div>
@@ -243,7 +243,7 @@ export default function CompliancePanel({ isDark }: { isDark: boolean }) {
         <div>
           <button
             onClick={() => setShowInfos(!showInfos)}
-            className={`text-[10px] font-medium flex items-center gap-1 transition-colors ${
+            className={`text-xs font-medium flex items-center gap-1 transition-colors ${
               isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -274,12 +274,12 @@ export function ComplianceBadge({ isDark }: { isDark: boolean }) {
   const result = useMemo(() => validateCompliance(config), [config]);
 
   if (result.errors.length === 0 && result.warnings.length === 0) {
-    return <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>OK</span>;
+    return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>OK</span>;
   }
 
   if (result.errors.length > 0) {
-    return <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-700'}`}>{result.errors.length + result.warnings.length}</span>;
+    return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-700'}`}>{result.errors.length + result.warnings.length}</span>;
   }
 
-  return <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'}`}>{result.warnings.length}</span>;
+  return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'}`}>{result.warnings.length}</span>;
 }

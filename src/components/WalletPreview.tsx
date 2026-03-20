@@ -124,7 +124,7 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
       {/* NFC indicator */}
       {config.contactless && (
         <div className="flex justify-center mb-2">
-          <div className="px-3 py-1 rounded-full text-[10px] font-medium"
+          <div className="px-3 py-1 rounded-full text-xs font-medium"
                style={{ background: isDark ? '#1c1c1e' : '#e5e5ea', color: subColor }}>
             Hold Near Reader
           </div>
@@ -157,7 +157,7 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
 
         {/* Card number area */}
         <div className="absolute bottom-4 left-4 z-[1]">
-          <div className="text-[10px] mb-0.5" style={{ color: ctSub }}>
+          <div className="text-xs mb-0.5" style={{ color: ctSub }}>
             {cardTypeLabels[config.cardType]}
           </div>
           <div className="text-sm font-mono tracking-wider" style={{ color: ct }}>
@@ -171,7 +171,7 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
         className="rounded-xl p-3"
         style={{ background: isDark ? '#1c1c1e' : '#ffffff' }}
       >
-        <div className="text-[11px] font-semibold mb-2" style={{ color: textColor }}>
+        <div className="text-xs font-semibold mb-2" style={{ color: textColor }}>
           Card Details
         </div>
         <div className="space-y-2">
@@ -193,7 +193,7 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
         className="rounded-xl p-3 mt-2"
         style={{ background: isDark ? '#1c1c1e' : '#ffffff' }}
       >
-        <div className="text-[11px] font-semibold mb-2" style={{ color: textColor }}>
+        <div className="text-xs font-semibold mb-2" style={{ color: textColor }}>
           Latest Transactions
         </div>
         <div className="space-y-2">
@@ -204,10 +204,10 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
           ].map(tx => (
             <div key={tx.name} className="flex justify-between items-center">
               <div>
-                <div className="text-[10px] font-medium" style={{ color: isDark ? '#fff' : '#000' }}>{tx.name}</div>
+                <div className="text-xs font-medium" style={{ color: isDark ? '#fff' : '#000' }}>{tx.name}</div>
                 <div className="text-[9px]" style={{ color: subColor }}>{tx.date}</div>
               </div>
-              <div className="text-[10px] font-medium" style={{ color: isDark ? '#fff' : '#000' }}>{tx.amount}</div>
+              <div className="text-xs font-medium" style={{ color: isDark ? '#fff' : '#000' }}>{tx.amount}</div>
             </div>
           ))}
         </div>
@@ -219,11 +219,11 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
 function DetailRow({ label, value, isDark }: { label: string; value: string; isDark: boolean }) {
   return (
     <div className="flex justify-between items-center">
-      <span className="text-[10px]" style={{ color: isDark ? '#8e8e93' : '#6e6e73' }}>
+      <span className="text-xs" style={{ color: isDark ? '#8e8e93' : '#6e6e73' }}>
         {label}
       </span>
       <span
-        className="text-[10px] font-medium"
+        className="text-xs font-medium"
         style={{ color: isDark ? '#fff' : '#000' }}
       >
         {value}
@@ -292,7 +292,7 @@ export function GoogleWalletView({ config }: { config: CardConfig }) {
 
       {/* Payment methods section */}
       <div className="mt-4 rounded-xl p-3" style={{ background: surfaceColor }}>
-        <div className="text-[11px] font-medium mb-2" style={{ color: textColor }}>
+        <div className="text-xs font-medium mb-2" style={{ color: textColor }}>
           Payment methods
         </div>
         <div className="flex items-center gap-2 py-1.5">
@@ -301,7 +301,7 @@ export function GoogleWalletView({ config }: { config: CardConfig }) {
             style={cardBgStyle}
           />
           <div>
-            <div className="text-[10px] font-medium" style={{ color: textColor }}>
+            <div className="text-xs font-medium" style={{ color: textColor }}>
               {config.issuerName} &bull;&bull;&bull;&bull; {last4}
             </div>
             <div className="text-[9px]" style={{ color: subColor }}>
@@ -313,15 +313,15 @@ export function GoogleWalletView({ config }: { config: CardConfig }) {
 
       {/* Passes section */}
       <div className="mt-2 rounded-xl p-3" style={{ background: surfaceColor }}>
-        <div className="text-[11px] font-medium mb-2" style={{ color: textColor }}>
+        <div className="text-xs font-medium mb-2" style={{ color: textColor }}>
           Passes
         </div>
         <div className="flex items-center gap-2 py-1">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px]" style={{ background: isDark ? '#1a73e8' : '#4285f4', color: '#fff' }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs" style={{ background: isDark ? '#1a73e8' : '#4285f4', color: '#fff' }}>
             SB
           </div>
           <div>
-            <div className="text-[10px] font-medium" style={{ color: textColor }}>Starbucks Rewards</div>
+            <div className="text-xs font-medium" style={{ color: textColor }}>Starbucks Rewards</div>
             <div className="text-[9px]" style={{ color: subColor }}>142 Stars</div>
           </div>
         </div>

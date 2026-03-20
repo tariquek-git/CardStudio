@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useCardConfig } from '../context';
 import { drawCardFront, ensureLogosLoaded } from '../cardCanvas';
+import { ConfirmDialog } from './ui';
 import type { SavedDesign } from '../types';
 
 // Generate a small thumbnail from a card config
@@ -47,10 +48,27 @@ export default function DesignGallery({
   const [editName, setEditName] = useState('');
   const [saveName, setSaveName] = useState('');
   const [showSaveInput, setShowSaveInput] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'name'>('newest');
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
   const saveInputRef = useRef<HTMLInputElement>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  const filteredDesigns = useMemo(() => {
+    let list = [...designs];
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(d => d.name.toLowerCase().includes(q));
+    }
+    switch (sortBy) {
+      case 'oldest': list.sort((a, b) => a.updatedAt - b.updatedAt); break;
+      case 'name': list.sort((a, b) => a.name.localeCompare(b.name)); break;
+      default: list.sort((a, b) => b.updatedAt - a.updatedAt); break;
+    }
+    return list;
+  }, [designs, searchQuery, sortBy]);
 
   // Focus management: trap focus in modal, restore on close
   useEffect(() => {
@@ -119,10 +137,15 @@ export default function DesignGallery({
   }, [editName, renameDesign]);
 
   const handleDelete = useCallback((id: string, name: string) => {
-    if (window.confirm(`Delete "${name}"?`)) {
-      deleteDesign(id);
+    setDeleteTarget({ id, name });
+  }, []);
+
+  const confirmDelete = useCallback(() => {
+    if (deleteTarget) {
+      deleteDesign(deleteTarget.id);
+      setDeleteTarget(null);
     }
-  }, [deleteDesign]);
+  }, [deleteTarget, deleteDesign]);
 
   if (!isOpen) return null;
 
@@ -152,7 +175,7 @@ export default function DesignGallery({
         <div className={`flex items-center justify-between px-5 py-4 border-b ${border}`}>
           <div>
             <h2 className={`text-sm font-semibold ${textPrimary}`}>My Designs</h2>
-            <p className={`text-[10px] ${textSecondary}`}>{designs.length} saved design{designs.length !== 1 ? 's' : ''}</p>
+            <p className={`text-xs ${textSecondary}`}>{designs.length} saved design{designs.length !== 1 ? 's' : ''}</p>
           </div>
           <div className="flex items-center gap-2">
             {!showSaveInput ? (
@@ -202,16 +225,42 @@ export default function DesignGallery({
           </div>
         </div>
 
+        {/* Search & Sort */}
+        {designs.length > 0 && (
+          <div className={`flex items-center gap-2 px-5 py-2.5 border-b ${border}`}>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search designs..."
+              className={`flex-1 px-2.5 py-1.5 text-xs rounded-lg border outline-none focus:ring-2 focus:ring-sky-400/50 ${inputBg}`}
+            />
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as 'newest' | 'oldest' | 'name')}
+              className={`px-2 py-1.5 text-xs rounded-lg border outline-none cursor-pointer ${inputBg}`}
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="name">Name</option>
+            </select>
+          </div>
+        )}
+
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-5">
           {designs.length === 0 ? (
             <div className={`text-center py-12 ${textSecondary}`}>
               <p className="text-sm">No saved designs yet</p>
-              <p className="text-[10px] mt-1">Click "Save Current" to save your first design</p>
+              <p className="text-xs mt-1">Click "Save Current" to save your first design</p>
+            </div>
+          ) : filteredDesigns.length === 0 ? (
+            <div className={`text-center py-12 ${textSecondary}`}>
+              <p className="text-sm">No designs match "{searchQuery}"</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {designs.map(design => (
+              {filteredDesigns.map(design => (
                 <DesignCard
                   key={design.id}
                   design={design}
@@ -239,6 +288,17 @@ export default function DesignGallery({
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete design"
+        message={`"${deleteTarget?.name}" will be permanently deleted. This cannot be undone.`}
+        confirmLabel="Delete"
+        confirmDestructive
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+        isDark={isDark}
+      />
     </div>
   );
 }
@@ -309,7 +369,7 @@ function DesignCard({
           </div>
         )}
         {isActive && (
-          <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[8px] font-semibold bg-sky-500 text-white">
+          <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-sky-500 text-white">
             Active
           </div>
         )}
@@ -326,14 +386,14 @@ function DesignCard({
               onChange={e => onEditNameChange(e.target.value)}
               onBlur={onFinishEdit}
               onKeyDown={e => e.key === 'Escape' && onCancelEdit()}
-              className={`w-full px-1.5 py-0.5 text-[11px] rounded border outline-none ${inputBg}`}
+              className={`w-full px-1.5 py-0.5 text-xs rounded border outline-none ${inputBg}`}
             />
           </form>
         ) : (
-          <p className={`text-[11px] font-medium truncate ${textPrimary}`}>{design.name}</p>
+          <p className={`text-xs font-medium truncate ${textPrimary}`}>{design.name}</p>
         )}
         <div className="flex items-center justify-between mt-1">
-          <span className={`text-[9px] ${textSecondary}`}>{dateStr}</span>
+          <span className={`text-[10px] ${textSecondary}`}>{dateStr}</span>
           <div className="flex items-center gap-0.5">
             <ActionBtn
               title="Rename"

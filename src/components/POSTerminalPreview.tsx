@@ -64,10 +64,10 @@ export default function POSTerminalPreview() {
           className="rounded-lg mb-3 flex flex-col items-center justify-center py-3"
           style={{ background: screenBg }}
         >
-          <div className="text-green-400 text-[10px] font-mono font-bold tracking-wider mb-0.5">
+          <div className="text-green-400 text-xs font-mono font-bold tracking-wider mb-0.5">
             TAP CARD
           </div>
-          <div className="text-green-400/50 text-[8px] font-mono">
+          <div className="text-green-400/50 text-[9px] font-mono">
             $42.50
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function POSTerminalPreview() {
           {[1,2,3,4,5,6,7,8,9,'*',0,'#'].map((k, i) => (
             <div
               key={i}
-              className="aspect-square rounded flex items-center justify-center text-[8px] font-mono"
+              className="aspect-square rounded flex items-center justify-center text-[9px] font-mono"
               style={{
                 background: isDark ? '#334155' : '#4b5563',
                 color: isDark ? '#94a3b8' : '#d1d5db',
@@ -104,7 +104,7 @@ export default function POSTerminalPreview() {
       </div>
 
       {/* Label */}
-      <div className={`mt-3 text-[10px] font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+      <div className={`mt-3 text-xs font-medium ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
         Contactless Payment Preview
       </div>
     </div>

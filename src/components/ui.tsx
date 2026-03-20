@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react';
 
 // ─── TOGGLE SWITCH ─────────────────────────────────────────
 // Modern iOS-style pill toggle
@@ -55,7 +55,7 @@ export function Toggle({
             </span>
           )}
           {sublabel && (
-            <span className={`block text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+            <span className={`block text-[11px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
               {sublabel}
             </span>
           )}
@@ -99,7 +99,7 @@ export function SegmentedControl<T extends string>({
   }, [value, options]);
 
   const py = size === 'sm' ? 'py-1' : 'py-1.5';
-  const textSize = size === 'sm' ? 'text-[11px]' : 'text-xs';
+  const textSize = size === 'sm' ? 'text-xs' : 'text-xs';
 
   return (
     <div
@@ -170,12 +170,12 @@ export function Slider({
       {(label || showValue) && (
         <div className="flex items-center justify-between mb-1.5">
           {label && (
-            <span className={`text-[11px] font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+            <span className={`text-xs font-medium ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               {label}
             </span>
           )}
           {showValue && (
-            <span className={`text-[11px] font-mono tabular-nums ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+            <span className={`text-xs font-mono tabular-nums ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
               {value}{suffix}
             </span>
           )}
@@ -221,19 +221,19 @@ export function Section({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`w-full flex items-center justify-between py-2.5 ${indent ? 'px-4' : 'px-0'} group transition-colors ${
+        className={`w-full flex items-center justify-between py-3 ${indent ? 'px-4' : 'px-0'} group transition-colors ${
           isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50'
         }`}
       >
         <div className="flex items-center gap-2">
-          <span className={`text-[11px] font-semibold uppercase tracking-wider ${
-            isDark ? 'text-slate-400' : 'text-slate-500'
+          <span className={`border-l-2 pl-2 text-xs font-semibold uppercase tracking-widest ${
+            isDark ? 'text-slate-400 border-sky-500/50' : 'text-slate-500 border-sky-400/50'
           }`}>
             {title}
           </span>
           {badge !== undefined && badge !== null && (
             typeof badge === 'object' ? badge : (
-              <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${
+              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
                 isDark ? 'bg-slate-700 text-slate-300' : 'bg-slate-200 text-slate-500'
               }`}>
                 {badge}
@@ -257,10 +257,10 @@ export function Section({
         </svg>
       </button>
       <div
-        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
-        style={{ maxHeight: open ? '2000px' : '0px' }}
+        className="overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out"
+        style={{ maxHeight: open ? '2000px' : '0px', opacity: open ? 1 : 0 }}
       >
-        <div className={`${indent ? 'px-4' : 'px-0'} pb-3`}>
+        <div className={`${indent ? 'px-4' : 'px-0'} pb-4`}>
           {children}
         </div>
       </div>
@@ -318,7 +318,7 @@ export function ColorPicker({
   return (
     <div ref={ref} className="relative">
       {label && (
-        <span className={`block text-[11px] font-medium mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+        <span className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
           {label}
         </span>
       )}
@@ -327,7 +327,7 @@ export function ColorPicker({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className={`w-9 h-9 rounded-lg border-2 transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-sky-400 ${
+          className={`w-10 h-10 rounded-lg border-2 transition-all hover:scale-105 focus-visible:ring-2 focus-visible:ring-sky-400 ${
             isDark ? 'border-slate-600' : 'border-slate-300'
           } ${open ? 'ring-2 ring-sky-400' : ''}`}
           style={{ background: color }}
@@ -409,14 +409,14 @@ export function OptionGrid<T extends string>({
             key={opt.value}
             type="button"
             onClick={() => onChange(opt.value)}
-            className={`flex flex-col items-center justify-center gap-1 px-1 py-2 rounded-lg text-[11px] font-medium transition-all ${
+            className={`flex flex-col items-center justify-center gap-1 px-2 py-2.5 rounded-lg text-xs font-medium transition-all ${
               selected
                 ? isDark
                   ? 'bg-sky-500/20 text-sky-300 ring-1 ring-sky-500/50'
                   : 'bg-sky-50 text-sky-600 ring-1 ring-sky-300'
                 : isDark
-                  ? 'bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300'
-                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-600'
+                  ? 'bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300 hover:-translate-y-px hover:shadow-sm'
+                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-600 hover:-translate-y-px hover:shadow-sm'
             }`}
           >
             {opt.preview}
@@ -441,7 +441,7 @@ export function OptionGrid<T extends string>({
 // ─── LABEL ─────────────────────────────────────────────────
 export function Label({ children, isDark }: { children: ReactNode; isDark: boolean }) {
   return (
-    <span className={`block text-[11px] font-medium mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+    <span className={`block text-xs font-medium mb-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
       {children}
     </span>
   );
@@ -477,12 +477,12 @@ export function Input({
       placeholder={placeholder}
       maxLength={maxLength}
       inputMode={inputMode}
-      className={`w-full px-3 py-2 text-xs rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
+      className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
         mono ? 'font-mono' : ''
       } ${
         isDark
-          ? 'bg-slate-800 border-slate-600 text-slate-200 placeholder:text-slate-600'
-          : 'bg-white border-slate-300 text-slate-700 placeholder:text-slate-400'
+          ? 'bg-slate-800/70 border-transparent text-slate-200 placeholder:text-slate-600 hover:bg-slate-800 focus:bg-slate-800 focus:border-sky-500/40'
+          : 'bg-slate-50 border-transparent text-slate-700 placeholder:text-slate-400 hover:bg-slate-100 focus:bg-white focus:border-sky-300'
       } ${extraClass}`}
     />
   );
@@ -517,7 +517,7 @@ export function LabeledInput({
       <div className="flex items-center justify-between mb-1.5">
         <Label isDark={isDark}>{label}</Label>
         {maxLength && (
-          <span className={`text-[10px] tabular-nums ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+          <span className={`text-xs tabular-nums ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
             {value.length}/{maxLength}
           </span>
         )}
@@ -539,7 +539,7 @@ export function LabeledInput({
 
 // ─── DIVIDER ───────────────────────────────────────────────
 export function Divider({ isDark }: { isDark: boolean }) {
-  return <div className={`h-px my-1 ${isDark ? 'bg-slate-700/40' : 'bg-slate-200/80'}`} />;
+  return <div className={`h-px my-2 ${isDark ? 'bg-slate-700/40' : 'bg-slate-200/80'}`} />;
 }
 
 // ─── COLOR SWATCH GRID ─────────────────────────────────────
@@ -598,13 +598,13 @@ export function IconButton({
   active?: boolean;
   size?: 'sm' | 'md';
 }) {
-  const s = size === 'sm' ? 'w-7 h-7' : 'w-9 h-9';
+  const s = size === 'sm' ? 'w-8 h-8' : 'w-10 h-10';
   return (
     <button
       type="button"
       onClick={onClick}
       title={title}
-      className={`${s} flex items-center justify-center rounded-lg transition-all ${
+      className={`${s} flex items-center justify-center rounded-lg transition-all active:scale-95 ${
         active
           ? 'bg-sky-500 text-white shadow-sm'
           : isDark
@@ -637,10 +637,10 @@ export function Select<T extends string>({
       <select
         value={value}
         onChange={e => onChange(e.target.value as T)}
-        className={`w-full px-3 py-2 text-xs rounded-lg border transition-colors appearance-none cursor-pointer bg-no-repeat focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
+        className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors appearance-none cursor-pointer bg-no-repeat focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
           isDark
-            ? 'bg-slate-800 border-slate-600 text-slate-200'
-            : 'bg-white border-slate-300 text-slate-700'
+            ? 'bg-slate-800/70 border-transparent text-slate-200 hover:bg-slate-800 focus:bg-slate-800 focus:border-sky-500/40'
+            : 'bg-slate-50 border-transparent text-slate-700 hover:bg-slate-100 focus:bg-white focus:border-sky-300'
         }`}
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%2394a3b8' stroke-width='1.5'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5'/%3E%3C/svg%3E")`,
@@ -682,7 +682,7 @@ export function ThumbnailGrid({
             key={item.key}
             type="button"
             onClick={() => onSelect(item.key)}
-            className={`relative rounded-lg overflow-hidden transition-all hover:scale-[1.03] ${
+            className={`relative rounded-lg overflow-hidden transition-all hover:scale-[1.03] hover:shadow-md ${
               isSelected
                 ? 'ring-2 ring-sky-400 ring-offset-1'
                 : `border ${isDark ? 'border-slate-700' : 'border-slate-200'}`
@@ -754,14 +754,14 @@ export function GradientEditor({
               background: `linear-gradient(to right, #0ea5e9 0%, #0ea5e9 ${stop.position}%, ${isDark ? '#334155' : '#e2e8f0'} ${stop.position}%, ${isDark ? '#334155' : '#e2e8f0'} 100%)`,
             }}
           />
-          <span className={`text-[10px] font-mono w-8 text-right ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+          <span className={`text-xs font-mono w-8 text-right ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
             {stop.position}%
           </span>
           {stops.length > 2 && (
             <button
               type="button"
               onClick={() => onStopsChange(stops.filter((_, j) => j !== i))}
-              className={`text-[10px] p-1 rounded hover:bg-red-500/10 ${isDark ? 'text-slate-600 hover:text-red-400' : 'text-slate-400 hover:text-red-500'}`}
+              className={`text-xs p-1 rounded hover:bg-red-500/10 ${isDark ? 'text-slate-600 hover:text-red-400' : 'text-slate-400 hover:text-red-500'}`}
             >
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M2 2l6 6M8 2l-6 6" />
@@ -776,7 +776,7 @@ export function GradientEditor({
         <button
           type="button"
           onClick={() => onStopsChange([...stops, { color: '#6366f1', position: 50 }])}
-          className={`text-[11px] font-medium px-2 py-1 rounded-md transition-colors ${
+          className={`text-xs font-medium px-2 py-1 rounded-md transition-colors ${
             isDark ? 'text-sky-400 hover:bg-sky-500/10' : 'text-sky-600 hover:bg-sky-50'
           }`}
         >
@@ -832,7 +832,7 @@ export function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`px-2.5 py-1 text-[11px] font-medium rounded-full transition-all ${
+      className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all ${
         active
           ? isDark
             ? 'bg-sky-500/20 text-sky-300 ring-1 ring-sky-500/50'
@@ -844,5 +844,306 @@ export function Chip({
     >
       {label}
     </button>
+  );
+}
+
+// ─── SECTION NAVIGATOR ────────────────────────────────────
+
+export interface SectionNavItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  modCount: number;
+  hasError?: boolean;
+}
+
+export function SectionNav({
+  items,
+  activeId,
+  isDark,
+  onJump,
+}: {
+  items: SectionNavItem[];
+  activeId: string | null;
+  isDark: boolean;
+  onJump: (id: string) => void;
+}) {
+  return (
+    <div className={`flex items-center gap-1 px-3 py-1.5 overflow-x-auto scrollbar-thin ${
+      isDark ? 'border-b border-slate-700/30' : 'border-b border-slate-200/80'
+    }`}>
+      {items.map(item => {
+        const active = item.id === activeId;
+        return (
+          <button
+            key={item.id}
+            onClick={() => onJump(item.id)}
+            className={`relative flex items-center gap-1 px-2.5 py-1.5 rounded-md text-[10px] font-medium transition-all whitespace-nowrap active:scale-95 ${
+              active
+                ? isDark
+                  ? 'bg-sky-500/15 text-sky-400'
+                  : 'bg-sky-50 text-sky-600'
+                : isDark
+                  ? 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/60'
+                  : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
+            }`}
+            title={item.label}
+          >
+            {item.icon}
+            <span className="hidden sm:inline">{item.label}</span>
+            {item.hasError && (
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-red-500" />
+            )}
+            {!item.hasError && item.modCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-sky-400" />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── CONFIRM DIALOG ──────────────────────────────────────
+
+export function ConfirmDialog({
+  open,
+  title,
+  message,
+  confirmLabel = 'Delete',
+  confirmDestructive = true,
+  onConfirm,
+  onCancel,
+  isDark,
+}: {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  confirmDestructive?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  isDark: boolean;
+}) {
+  const confirmRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (open) confirmRef.current?.focus();
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open, onCancel]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-label={title}
+        className={`relative w-full max-w-sm rounded-xl border shadow-2xl p-5 ${
+          isDark ? 'bg-slate-800 border-slate-600' : 'bg-white border-slate-200'
+        }`}
+      >
+        <h3 className={`text-sm font-semibold mb-1 ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>{title}</h3>
+        <p className={`text-xs mb-5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{message}</p>
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors ${
+              isDark ? 'text-slate-300 hover:bg-slate-700' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            Cancel
+          </button>
+          <button
+            ref={confirmRef}
+            onClick={onConfirm}
+            className={`px-4 py-2 text-xs font-medium rounded-lg text-white transition-colors active:scale-[0.97] ${
+              confirmDestructive
+                ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
+                : 'bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700'
+            }`}
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── VALIDATED INPUT ─────────────────────────────────────
+
+export type ValidationRule = {
+  test: (value: string) => boolean;
+  message: string;
+};
+
+export function ValidatedInput({
+  label,
+  value,
+  onChange,
+  placeholder,
+  maxLength,
+  isDark,
+  uppercase = false,
+  mono = false,
+  rules = [],
+  inputMode,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  maxLength?: number;
+  isDark: boolean;
+  uppercase?: boolean;
+  mono?: boolean;
+  rules?: ValidationRule[];
+  inputMode?: 'numeric' | 'text' | 'tel' | 'url';
+}) {
+  const [touched, setTouched] = useState(false);
+
+  const error = touched && value.length > 0
+    ? rules.find(r => !r.test(value))?.message ?? null
+    : null;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-1.5">
+        <Label isDark={isDark}>{label}</Label>
+        {maxLength && (
+          <span className={`text-xs tabular-nums ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+            {value.length}/{maxLength}
+          </span>
+        )}
+      </div>
+      <Input
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        isDark={isDark}
+        uppercase={uppercase}
+        mono={mono}
+        inputMode={inputMode as 'numeric' | 'text'}
+        className={error ? (isDark ? 'border-red-500/60 ring-1 ring-red-500/30' : 'border-red-400 ring-1 ring-red-300/50') : ''}
+      />
+      {error && (
+        <p className="mt-1 text-xs text-red-400">{error}</p>
+      )}
+      {!touched && <input type="hidden" onFocus={() => setTouched(true)} />}
+      {/* trigger touch on blur of the actual input above — handled via wrapping */}
+    </div>
+  );
+}
+
+// ─── LOADING SPINNER ─────────────────────────────────────
+
+export function Spinner({ size = 16, className = '' }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={`animate-spin ${className}`}>
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.2" />
+      <path d="M12 2a10 10 0 019.95 9" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// ─── useConfirm hook ─────────────────────────────────────
+
+export function useConfirm() {
+  const [state, setState] = useState<{
+    open: boolean;
+    title: string;
+    message: string;
+    confirmLabel: string;
+    destructive: boolean;
+    resolve: ((v: boolean) => void) | null;
+  }>({ open: false, title: '', message: '', confirmLabel: 'Confirm', destructive: true, resolve: null });
+
+  const confirm = useCallback((opts: { title: string; message: string; confirmLabel?: string; destructive?: boolean }): Promise<boolean> => {
+    return new Promise(resolve => {
+      setState({
+        open: true,
+        title: opts.title,
+        message: opts.message,
+        confirmLabel: opts.confirmLabel ?? 'Delete',
+        destructive: opts.destructive ?? true,
+        resolve,
+      });
+    });
+  }, []);
+
+  const handleConfirm = useCallback(() => {
+    state.resolve?.(true);
+    setState(s => ({ ...s, open: false, resolve: null }));
+  }, [state.resolve]);
+
+  const handleCancel = useCallback(() => {
+    state.resolve?.(false);
+    setState(s => ({ ...s, open: false, resolve: null }));
+  }, [state.resolve]);
+
+  return { confirm, dialogProps: { ...state, onConfirm: handleConfirm, onCancel: handleCancel } };
+}
+
+// ─── ADVANCED TOGGLE ──────────────────────────────────────
+
+export function AdvancedToggle({
+  open,
+  onToggle,
+  isDark,
+  label = 'More options',
+  children,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  isDark: boolean;
+  label?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`flex items-center gap-1.5 text-xs font-medium transition-colors ${
+          isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
+        }`}
+      >
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 8 8"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          className={`transition-transform duration-200 ${open ? 'rotate-90' : ''}`}
+        >
+          <path d="M2.5 1L5.5 4L2.5 7" />
+        </svg>
+        {label}
+      </button>
+      <div
+        className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
+        style={{ maxHeight: open ? '1200px' : '0px' }}
+      >
+        <div className={`mt-3 space-y-4 pl-3 ${
+          isDark ? 'border-l-2 border-slate-700/50' : 'border-l-2 border-slate-200'
+        }`}>
+          {children}
+        </div>
+      </div>
+    </div>
   );
 }

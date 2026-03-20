@@ -8,15 +8,17 @@
   --color-primary: #0EA5E9;
   --color-primary-dark: #0284C7;
   --color-primary-light: #38BDF8;
-  --color-surface-dark: #0F172A;
-  --color-surface-dark-2: #1E293B;
-  --color-surface-dark-3: #334155;
+  --color-accent: #8B5CF6;
+  --color-accent-light: #A78BFA;
+  --color-surface-dark: #0C1222;
+  --color-surface-dark-2: #151D2E;
+  --color-surface-dark-3: #1E293B;
   --color-surface-light: #F8FAFC;
   --color-surface-light-2: #E2E8F0;
-  --color-border-dark: #334155;
+  --color-border-dark: #2A3548;
   --color-border-light: #CBD5E1;
   --color-text-dark: #F1F5F9;
-  --color-text-dark-secondary: #94A3B8;
+  --color-text-dark-secondary: #8896AB;
   --color-text-light: #0F172A;
   --color-text-light-secondary: #64748B;
 }
@@ -40,14 +42,14 @@ body {
 }
 
 /* ─── Scrollbars ─────────────────────────────────────────── */
-.dark ::-webkit-scrollbar { width: 5px; }
+.dark ::-webkit-scrollbar { width: 6px; }
 .dark ::-webkit-scrollbar-track { background: transparent; }
-.dark ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #334155; }
+.dark ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; transition: background 0.2s; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #3B4A63; }
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; transition: background 0.2s; }
 ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 
 /* ─── Range Sliders ──────────────────────────────────────── */
@@ -64,14 +66,14 @@ input[type="range"] { background: #e2e8f0; }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--color-primary);
   cursor: pointer;
   border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  transition: transform 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25), 0 0 0 3px rgba(14, 165, 233, 0.12);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 input[type="range"]::-webkit-slider-thumb:hover {
   transform: scale(1.15);
@@ -94,11 +96,11 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 6px; }
 /* ─── Focus rings ────────────────────────────────────────── */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.4);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5), 0 0 0 4px rgba(14, 165, 233, 0.15);
   border-radius: inherit;
 }
 input:focus-visible, select:focus-visible, textarea:focus-visible {
-  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.3);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.4), 0 0 0 4px rgba(14, 165, 233, 0.1);
 }
 
 /* ─── Animations ─────────────────────────────────────────── */
@@ -127,7 +129,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 button, a {
   transition-property: color, background-color, border-color, box-shadow, transform, opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  transition-duration: 200ms;
 }
 
 /* ─── Selection ──────────────────────────────────────────── */

@@ -45,8 +45,8 @@ export default function App() {
     <div className={`h-screen flex flex-col ${isDark ? 'dark bg-slate-950 text-slate-200' : 'bg-white text-slate-800'}`}>
       {/* Header */}
       <header
-        className={`flex items-center justify-between px-4 py-2.5 ${
-          isDark ? 'bg-slate-900/80 backdrop-blur-md border-b border-slate-700/30' : 'bg-white/80 backdrop-blur-md border-b border-slate-200/80'
+        className={`relative flex items-center justify-between px-4 py-3 ${
+          isDark ? 'bg-slate-900/80 backdrop-blur-md' : 'bg-white/80 backdrop-blur-md'
         }`}
       >
         <div className="flex items-center gap-3">
@@ -66,7 +66,7 @@ export default function App() {
             </svg>
           </button>
           {/* Logo mark */}
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center shadow-sm">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-400 to-violet-500 flex items-center justify-center shadow-sm">
             <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
               <rect x="2" y="4" width="14" height="10" rx="2" stroke="white" strokeWidth="1.5" fill="none" />
               <rect x="4" y="7" width="4" height="3" rx="0.5" fill="white" opacity="0.8" />
@@ -74,7 +74,7 @@ export default function App() {
             </svg>
           </div>
           <div className="hidden sm:block">
-            <h1 className={`text-[13px] font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            <h1 className={`text-sm font-semibold tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
               Card Studio
             </h1>
           </div>
@@ -94,7 +94,7 @@ export default function App() {
               title="Undo (Ctrl+Z)"
               aria-label="Undo"
             >
-              <svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 5.5h6a3.5 3.5 0 0 1 0 7H8" />
                 <path d="M5.5 3L3 5.5 5.5 8" />
               </svg>
@@ -111,7 +111,7 @@ export default function App() {
               title="Redo (Ctrl+Shift+Z)"
               aria-label="Redo"
             >
-              <svg width="14" height="14" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 5.5H6a3.5 3.5 0 0 0 0 7h1" />
                 <path d="M9.5 3L12 5.5 9.5 8" />
               </svg>
@@ -133,7 +133,7 @@ export default function App() {
               <rect x="9.5" y="9" width="5" height="4" rx="0.8" />
             </svg>
             {designs.length > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-sky-500 text-white text-[8px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-sky-500 text-white text-[9px] font-bold flex items-center justify-center">
                 {designs.length}
               </span>
             )}
@@ -169,6 +169,8 @@ export default function App() {
           </button>
         </div>
       </header>
+      {/* Gradient accent line */}
+      <div className={`h-px ${isDark ? 'bg-gradient-to-r from-sky-500/50 via-violet-500/30 to-transparent' : 'bg-gradient-to-r from-sky-400/40 via-violet-400/20 to-transparent'}`} />
 
       {/* Main Content - Two Panel Layout */}
       <main className="flex flex-1 overflow-hidden relative">
@@ -200,12 +202,12 @@ export default function App() {
 
       {/* Footer */}
       <footer
-        className={`px-5 py-1.5 flex items-center justify-between text-[10px] ${
+        className={`px-5 py-2 flex items-center justify-between text-xs ${
           isDark ? 'bg-slate-900/80 border-t border-slate-700/20 text-slate-600' : 'bg-slate-50/80 border-t border-slate-200/50 text-slate-400'
         }`}
       >
         <span>
-          <strong className={isDark ? 'text-slate-500' : 'text-slate-500'}>Fintech Commons</strong>
+          <strong className="bg-gradient-to-r from-sky-400 to-violet-400 bg-clip-text text-transparent">Fintech Commons</strong>
         </span>
         <span className="hidden sm:inline">Card program previewer for fintech builders</span>
       </footer>

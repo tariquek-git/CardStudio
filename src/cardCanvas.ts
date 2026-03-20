@@ -101,6 +101,27 @@ for (const n of networks) {
 }
 loadLogo('/logos/visa-white.svg');
 
+// ─── QR CODE CACHE ──────────────────────────────────────────
+let qrCanvasCache: HTMLCanvasElement | null = null;
+let qrCacheUrl = '';
+
+async function generateQrCanvas(url: string): Promise<HTMLCanvasElement | null> {
+  if (!url.trim()) { qrCanvasCache = null; qrCacheUrl = ''; return null; }
+  if (url === qrCacheUrl && qrCanvasCache) return qrCanvasCache;
+  try {
+    const QRCode = (await import('qrcode')).default;
+    const canvas = document.createElement('canvas');
+    await QRCode.toCanvas(canvas, url, { width: 200, margin: 0, color: { dark: '#000000', light: '#ffffff' } });
+    qrCanvasCache = canvas;
+    qrCacheUrl = url;
+    return canvas;
+  } catch {
+    qrCanvasCache = null;
+    qrCacheUrl = '';
+    return null;
+  }
+}
+
 // Back-of-card ATM network logos
 const backLogoIds = ['cirrus', 'plus', 'star', 'pulse'];
 for (const id of backLogoIds) {
@@ -880,6 +901,18 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
     ctx.globalAlpha = 1;
   }
 
+  // QR code (rendered from pre-generated canvas)
+  if (config.backQrUrl?.trim() && qrCanvasCache) {
+    const qrSize = isH ? 70 : 55;
+    const qrX = w - qrSize - (isH ? 50 : 40);
+    const qrY = cursorY - (showSigStrip ? 10 : 0);
+    // White background for QR readability
+    ctx.fillStyle = '#ffffff';
+    roundedRect(ctx, qrX - 4, qrY - 4, qrSize + 8, qrSize + 8, 4);
+    ctx.fill();
+    ctx.drawImage(qrCanvasCache, qrX, qrY, qrSize, qrSize);
+  }
+
   // Security hologram sticker
   if (config.backShowHologram !== false) {
     const holoX = isH ? w - 100 : w - 80;
@@ -939,13 +972,14 @@ export function drawCardBack(canvas: HTMLCanvasElement, config: CardConfig) {
 }
 
 // Ensure logos are loaded before first draw
-export async function ensureLogosLoaded(issuerLogo?: string | null, cardArt?: string | null, coBrandLogo?: string | null): Promise<void> {
-  const promises = networks.map(n => loadLogo(`/logos/${n}.svg`));
+export async function ensureLogosLoaded(issuerLogo?: string | null, cardArt?: string | null, coBrandLogo?: string | null, qrUrl?: string): Promise<void> {
+  const promises: Promise<unknown>[] = networks.map(n => loadLogo(`/logos/${n}.svg`));
   promises.push(loadLogo('/logos/visa-white.svg'));
   for (const id of backLogoIds) promises.push(loadLogo(`/logos/${id}.svg`));
   if (issuerLogo) promises.push(loadLogo(issuerLogo));
   if (cardArt) promises.push(loadLogo(cardArt));
   if (coBrandLogo) promises.push(loadLogo(coBrandLogo));
+  if (qrUrl) promises.push(generateQrCanvas(qrUrl));
   await Promise.all(promises);
 }
 

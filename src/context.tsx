@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, useMemo, type ReactNode } from 'react';
 import { type CardConfig, type SavedDesign, defaultConfig } from './types';
 import { networkTierConfig } from './data';
 
@@ -289,26 +289,36 @@ export function CardConfigProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const canUndo = state.past.length > 0;
+  const canRedo = state.future.length > 0;
+
+  const contextValue = useMemo<CardConfigContextType>(() => ({
+    config: state.config,
+    updateConfig,
+    resetConfig,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    designs,
+    activeDesignId,
+    saveDesign,
+    loadDesign,
+    deleteDesign,
+    duplicateDesign,
+    renameDesign,
+    updateDesignThumbnail,
+    storageWarning,
+    clearStorageWarning,
+  }), [
+    state.config, updateConfig, resetConfig, undo, redo,
+    canUndo, canRedo, designs, activeDesignId,
+    saveDesign, loadDesign, deleteDesign, duplicateDesign,
+    renameDesign, updateDesignThumbnail, storageWarning, clearStorageWarning,
+  ]);
+
   return (
-    <CardConfigContext.Provider value={{
-      config: state.config,
-      updateConfig,
-      resetConfig,
-      undo,
-      redo,
-      canUndo: state.past.length > 0,
-      canRedo: state.future.length > 0,
-      designs,
-      activeDesignId,
-      saveDesign,
-      loadDesign,
-      deleteDesign,
-      duplicateDesign,
-      renameDesign,
-      updateDesignThumbnail,
-      storageWarning,
-      clearStorageWarning,
-    }}>
+    <CardConfigContext.Provider value={contextValue}>
       {children}
     </CardConfigContext.Provider>
   );

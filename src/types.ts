@@ -20,7 +20,7 @@ export type CardFace = 'front' | 'back';
 
 export type CardMaterial = 'matte' | 'glossy' | 'metal' | 'brushedMetal' | 'clear' | 'holographic' | 'recycledPlastic' | 'wood';
 
-export type RenderScene = '3d' | 'wallet-apple' | 'wallet-google' | 'terminal';
+export type RenderScene = '3d' | 'wallet-apple' | 'wallet-google' | 'terminal' | 'compare';
 
 export type BackLogo = 'cirrus' | 'plus' | 'star' | 'pulse';
 
@@ -100,10 +100,10 @@ export interface CardConfig {
   coBrandPartner: string;         // co-brand partner name
   coBrandLogo: string | null;     // co-brand partner logo (data URL)
   dualInterfaceBadge: boolean;    // show DEBIT/CREDIT badge on front
-  memberSince: string;            // separate from expiry, format YYYY
   cardLevelBadge: string;         // custom tier badge text override
   issuerAddress: string;          // issuer address for card back
   bilingualRequired: boolean;     // Canadian bilingual requirement
+  backQrUrl: string;              // QR code URL for card back
 }
 
 export interface SavedDesign {
@@ -175,8 +175,8 @@ export const defaultConfig: CardConfig = {
   coBrandPartner: '',
   coBrandLogo: null,
   dualInterfaceBadge: false,
-  memberSince: '',
   cardLevelBadge: '',
   issuerAddress: '',
   bilingualRequired: false,
+  backQrUrl: '',
 };

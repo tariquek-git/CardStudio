@@ -559,7 +559,7 @@ export function CardConfigProvider({ children }: { children: ReactNode }) {
         const merged = { ...p, ...updates, updatedAt: Date.now() };
         // Cascade shared fields to tier designs
         const hasSharedFieldChange = PROGRAM_SHARED_FIELDS.some(
-          f => f in updates && (updates as Record<string, unknown>)[f] !== (p as Record<string, unknown>)[f]
+          f => f in updates && (updates as unknown as Record<string, unknown>)[f] !== (p as unknown as Record<string, unknown>)[f]
         );
         if (hasSharedFieldChange) {
           // Schedule cascade after state update
@@ -626,7 +626,7 @@ export function CardConfigProvider({ children }: { children: ReactNode }) {
       persistPrograms(updated, setStorageWarning);
       return updated;
     });
-    track({ type: 'program_tier_add' as never, programId, tierId: tier.id });
+    track({ type: 'tier_add', programId });
     return tier;
   }, [programs]);
 
@@ -651,7 +651,7 @@ export function CardConfigProvider({ children }: { children: ReactNode }) {
       persistPrograms(updated, setStorageWarning);
       return updated;
     });
-    track({ type: 'program_tier_remove' as never, programId, tierId });
+    track({ type: 'tier_remove', programId });
   }, [programs]);
 
   const reorderTiers = useCallback((programId: string, tierIds: string[]) => {

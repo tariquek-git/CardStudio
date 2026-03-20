@@ -3,7 +3,7 @@
 // Use subscribe() to wire in PostHog, Segment, or custom backend later.
 
 export type AnalyticsEvent =
-  | { type: 'page_view'; view: 'dashboard' | 'editor' }
+  | { type: 'page_view'; view: 'dashboard' | 'editor' | 'program-editor' }
   | { type: 'design_create'; designId: string; name: string }
   | { type: 'design_save'; designId: string }
   | { type: 'design_load'; designId: string }
@@ -13,7 +13,13 @@ export type AnalyticsEvent =
   | { type: 'export_trigger'; format: string }
   | { type: 'config_change'; field: string }
   | { type: 'theme_toggle'; dark: boolean }
-  | { type: 'hub_navigate' };
+  | { type: 'hub_navigate' }
+  | { type: 'program_create'; programId: string; name: string }
+  | { type: 'program_delete'; programId: string }
+  | { type: 'program_duplicate'; programId: string }
+  | { type: 'program_update'; programId: string }
+  | { type: 'tier_add'; programId: string }
+  | { type: 'tier_remove'; programId: string };
 
 type TimestampedEvent = AnalyticsEvent & { timestamp: number };
 type Handler = (event: TimestampedEvent) => void;

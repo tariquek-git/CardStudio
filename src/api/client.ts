@@ -11,12 +11,13 @@ export function getAccessToken(): string | null {
 }
 
 export class ApiError extends Error {
-  constructor(
-    public status: number,
-    public body: any,
-  ) {
+  status: number;
+  body: any;
+  constructor(status: number, body: any) {
     super(body?.error || `API error ${status}`);
     this.name = 'ApiError';
+    this.status = status;
+    this.body = body;
   }
 }
 

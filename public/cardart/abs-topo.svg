@@ -1,23 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 645" width="1024" height="645">
-  <g fill="none" stroke="white" stroke-width="1" stroke-linecap="round">
-    <!-- Topographic contour lines -->
-    <path d="M200,500 Q280,460 350,480 Q420,500 480,450 Q540,400 620,420 Q700,440 750,390" opacity="0.36"/>
-    <path d="M180,470 Q260,420 340,450 Q410,480 460,420 Q520,360 610,390 Q690,420 760,360" opacity="0.30"/>
-    <path d="M160,440 Q240,380 320,410 Q400,440 450,380 Q510,320 600,350 Q680,380 770,330" opacity="0.27"/>
-    <path d="M150,400 Q230,340 310,370 Q380,400 440,340 Q500,280 580,310 Q660,340 780,300" opacity="0.24"/>
-    <path d="M140,360 Q220,300 300,330 Q370,360 430,300 Q490,240 570,270 Q650,300 790,260" opacity="0.21"/>
-    <path d="M130,320 Q210,260 290,290 Q360,320 420,260 Q480,200 560,230 Q640,260 800,220" opacity="0.18"/>
-    <!-- Second contour cluster -->
-    <path d="M500,280 Q560,240 630,260 Q700,280 760,230 Q820,180 890,210 Q950,240 1024,200" opacity="0.30"/>
-    <path d="M480,250 Q550,200 620,230 Q690,260 750,200 Q810,150 880,180 Q940,210 1024,170" opacity="0.24"/>
-    <path d="M460,220 Q540,170 610,200 Q680,230 740,170 Q800,120 870,150 Q930,180 1024,140" opacity="0.18"/>
-    <!-- Lower cluster -->
-    <path d="M0,350 Q80,310 160,340 Q240,370 300,310 Q360,250 440,280" opacity="0.24"/>
-    <path d="M0,310 Q70,270 150,300 Q230,330 290,270 Q350,210 430,240" opacity="0.18"/>
-    <path d="M0,270 Q60,230 140,260 Q220,290 280,230 Q340,170 420,200" opacity="0.15"/>
-    <!-- Scattered elevation marks -->
-    <circle cx="400" cy="340" r="3" fill="white" opacity="0.24"/>
-    <circle cx="680" cy="260" r="3" fill="white" opacity="0.24"/>
-    <circle cx="250" cy="380" r="3" fill="white" opacity="0.18"/>
+  <defs>
+    <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0.8">
+      <stop offset="0%" stop-color="white" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0.08"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#tg)" stroke-linecap="round">
+    <!-- Dense contour cluster — upper right -->
+    <path d="M500,280 Q570,230 650,260 Q730,290 790,230 Q850,170 920,210 Q980,250 1060,200" stroke-width="1.8" opacity="0.55"/>
+    <path d="M480,250 Q560,195 640,225 Q720,255 775,195 Q835,135 910,175 Q975,215 1060,165" stroke-width="1.5" opacity="0.48"/>
+    <path d="M460,220 Q550,160 635,195 Q715,225 765,160 Q825,100 900,140 Q970,180 1060,130" stroke-width="1.3" opacity="0.4"/>
+    <path d="M445,190 Q540,130 625,165 Q705,200 755,130 Q815,70 895,110 Q965,150 1060,100" stroke-width="1.1" opacity="0.32"/>
+    <path d="M430,160 Q530,100 615,135 Q695,170 745,100 Q805,40 890,80 Q960,120 1060,70" stroke-width="0.9" opacity="0.24"/>
+    <!-- Dense contour cluster — center left -->
+    <path d="M0,420 Q90,370 180,400 Q270,430 340,370 Q400,310 480,340 Q560,370 630,320" stroke-width="1.8" opacity="0.5"/>
+    <path d="M0,385 Q80,335 170,365 Q255,395 325,335 Q385,275 465,305 Q545,335 620,285" stroke-width="1.5" opacity="0.42"/>
+    <path d="M0,350 Q70,300 160,330 Q240,360 310,300 Q370,240 450,270 Q530,300 610,250" stroke-width="1.3" opacity="0.35"/>
+    <path d="M0,315 Q60,265 150,295 Q225,325 295,265 Q355,205 435,235 Q515,265 600,215" stroke-width="1.1" opacity="0.28"/>
+    <path d="M0,280 Q50,230 140,260 Q210,290 280,230 Q340,170 420,200 Q500,230 590,180" stroke-width="0.9" opacity="0.2"/>
+    <!-- Lower scattered contours -->
+    <path d="M200,540 Q300,500 400,530 Q500,560 600,510 Q700,460 800,500 Q900,540 1024,490" stroke-width="1.2" opacity="0.32"/>
+    <path d="M180,510 Q290,465 390,500 Q490,535 590,480 Q690,425 790,465 Q890,505 1024,455" stroke-width="1" opacity="0.25"/>
+    <path d="M160,480 Q280,435 380,470 Q480,505 580,450 Q680,395 780,435 Q880,475 1024,425" stroke-width="0.8" opacity="0.18"/>
+    <!-- Upper light contours -->
+    <path d="M0,120 Q120,80 220,110 Q320,140 420,90 Q520,40 620,80 Q720,120 820,70" stroke-width="1" opacity="0.22"/>
+    <path d="M0,85 Q110,45 210,75 Q310,105 410,55 Q510,5 610,45 Q710,85 810,35" stroke-width="0.8" opacity="0.15"/>
+    <!-- Elevation dots -->
+    <circle cx="400" cy="340" r="4" fill="white" opacity="0.35"/>
+    <circle cx="680" cy="240" r="4" fill="white" opacity="0.35"/>
+    <circle cx="250" cy="380" r="3.5" fill="white" opacity="0.28"/>
+    <circle cx="820" cy="190" r="3" fill="white" opacity="0.22"/>
+    <circle cx="550" cy="490" r="3" fill="white" opacity="0.22"/>
   </g>
 </svg>

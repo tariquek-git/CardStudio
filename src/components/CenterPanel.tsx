@@ -4,7 +4,7 @@ import { OrbitControls, ContactShadows, Environment, Lightformer } from '@react-
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 import { useCardConfig } from '../context';
-import { drawCardFront, drawCardBack, ensureLogosLoaded } from '../cardCanvas';
+import { drawCardFront, drawCardBack, ensureLogosLoaded } from '../canvas';
 import { presetColors } from '../data';
 import type { CardMaterial, RenderScene } from '../types';
 import { downloadCardSVG } from '../svgExport';
@@ -81,19 +81,19 @@ function getMaterialProps(material: CardMaterial): Partial<THREE.MeshPhysicalMat
   switch (material) {
     case 'glossy':
       return {
-        roughness: 0.18, metalness: 0.02, clearcoat: 1.0, clearcoatRoughness: 0.08,
-        reflectivity: 0.5, envMapIntensity: 1.2,
+        roughness: 0.15, metalness: 0.02, clearcoat: 1.0, clearcoatRoughness: 0.06,
+        reflectivity: 0.6, envMapIntensity: 1.5,
       };
     case 'metal':
       return {
-        roughness: 0.08, metalness: 0.95, clearcoat: 0.5, clearcoatRoughness: 0.04,
-        reflectivity: 1.0, envMapIntensity: 1.8,
+        roughness: 0.08, metalness: 0.7, clearcoat: 0.9, clearcoatRoughness: 0.04,
+        reflectivity: 1.0, envMapIntensity: 2.2,
       };
     case 'brushedMetal':
       return {
-        roughness: 0.35, metalness: 0.85, clearcoat: 0.3, clearcoatRoughness: 0.15,
+        roughness: 0.28, metalness: 0.6, clearcoat: 0.7, clearcoatRoughness: 0.1,
         anisotropy: 1.0, anisotropyRotation: Math.PI / 2,
-        reflectivity: 0.8, envMapIntensity: 1.4,
+        reflectivity: 0.9, envMapIntensity: 2.0,
       };
     case 'clear':
       return {
@@ -396,7 +396,7 @@ export default function CenterPanel() {
   const handleExportPDF = useCallback(async () => {
     setExporting('Generating print-ready PDF...');
     try {
-      const { drawCardFront: drawFront, drawCardBack: drawBack } = await import('../cardCanvas');
+      const { drawCardFront: drawFront, drawCardBack: drawBack } = await import('../canvas');
       const { jsPDF } = await import('jspdf');
 
       // CR80 card: 3.375" x 2.125" — add 0.125" bleed on each side
@@ -418,7 +418,7 @@ export default function CenterPanel() {
       backCanvas.width = canvasW;
       backCanvas.height = canvasH;
 
-      const { ensureLogosLoaded: loadLogos } = await import('../cardCanvas');
+      const { ensureLogosLoaded: loadLogos } = await import('../canvas');
       await loadLogos(config.issuerLogo, config.cardArt, config.coBrandLogo, config.backQrUrl);
       await drawFront(frontCanvas, config);
       await drawBack(backCanvas, config);
@@ -648,13 +648,13 @@ export default function CenterPanel() {
               frameloop="always"
               onCreated={({ gl }) => {
                 gl.toneMapping = THREE.ACESFilmicToneMapping;
-                gl.toneMappingExposure = 1.15;
+                gl.toneMappingExposure = 1.6;
               }}
             >
               <color attach="background" args={isDark ? [BG_DARK.r, BG_DARK.g, BG_DARK.b] : [BG_LIGHT.r, BG_LIGHT.g, BG_LIGHT.b]} />
 
               {/* Ambient fill — balanced for readable card faces */}
-              <ambientLight intensity={0.5} />
+              <ambientLight intensity={0.8} />
 
               {/* Key light — warm, top-right, main illumination */}
               <directionalLight
@@ -690,32 +690,32 @@ export default function CenterPanel() {
               <Card3D key="card3d" />
 
               {/* Studio-style environment with custom lightformers */}
-              <Environment background={false} resolution={512}>
+              <Environment background={false} resolution={1024}>
                 {/* Main soft box — large, from above-front */}
                 <Lightformer
                   form="rect"
-                  intensity={3.0}
+                  intensity={4.0}
                   position={[0, 4, 3]}
                   rotation={[-Math.PI / 3, 0, 0]}
-                  scale={[8, 4, 1]}
+                  scale={[10, 5, 1]}
                   color="#fff8f0"
                 />
                 {/* Side accent strip — cool blue edge light */}
                 <Lightformer
                   form="rect"
-                  intensity={1.2}
+                  intensity={1.8}
                   position={[-5, 1, 0]}
                   rotation={[0, Math.PI / 2, 0]}
-                  scale={[4, 1.5, 1]}
+                  scale={[5, 2, 1]}
                   color="#c8d8ff"
                 />
                 {/* Opposite side fill strip */}
                 <Lightformer
                   form="rect"
-                  intensity={0.8}
+                  intensity={1.2}
                   position={[5, 0, -1]}
                   rotation={[0, -Math.PI / 2, 0]}
-                  scale={[3, 2, 1]}
+                  scale={[4, 2.5, 1]}
                   color="#e0e8ff"
                 />
                 {/* Bottom warm bounce panel */}
@@ -730,11 +730,11 @@ export default function CenterPanel() {
                 {/* Back rim strip */}
                 <Lightformer
                   form="rect"
-                  intensity={2.0}
+                  intensity={2.5}
                   position={[0, 2, -5]}
                   rotation={[0, 0, 0]}
-                  scale={[8, 3, 1]}
-                  color="#c0d0f0"
+                  scale={[10, 4, 1]}
+                  color="#d0e0ff"
                 />
               </Environment>
 
@@ -1095,7 +1095,7 @@ function ExportMenu({
               <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>{item.icon}</span>
               <div>
                 <div className="text-xs font-medium">{item.label}</div>
-                <div className={`text-[10px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{item.desc}</div>
+                <div className={`text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{item.desc}</div>
               </div>
             </button>
           ))}

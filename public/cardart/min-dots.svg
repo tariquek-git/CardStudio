@@ -1,8 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 645" width="1024" height="645">
   <defs>
-    <pattern id="dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-      <circle cx="12" cy="12" r="1.5" fill="white" opacity="0.30"/>
+    <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1.8" fill="white" opacity="0.38"/>
     </pattern>
+    <pattern id="dots2" x="10" y="10" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="0.8" fill="white" opacity="0.2"/>
+    </pattern>
+    <radialGradient id="dglow" cx="70%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dgrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="black" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="black" stop-opacity="0"/>
+      <stop offset="100%" stop-color="black" stop-opacity="0.3"/>
+    </linearGradient>
   </defs>
+  <!-- Primary dot grid -->
   <rect width="1024" height="645" fill="url(#dots)"/>
+  <!-- Secondary smaller dots (half-offset) -->
+  <rect width="1024" height="645" fill="url(#dots2)"/>
+  <!-- Glow and edge fades -->
+  <rect width="1024" height="645" fill="url(#dglow)"/>
+  <rect width="1024" height="645" fill="url(#dgrad)"/>
 </svg>

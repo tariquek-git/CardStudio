@@ -1,4 +1,4 @@
-import type { CardConfig } from './types';
+import type { CardConfig, CardNetwork, IssuerType, CardMaterial, ChipStyle } from './types';
 import { defaultConfig } from './types';
 
 export interface CardTemplate {
@@ -21,7 +21,7 @@ export const cardTemplates: CardTemplate[] = [
       tier: 'classic',
       cardType: 'debit',
       colorMode: 'preset',
-      presetColor: 'matteBlack',
+      presetColor: 'oceanGradient',
       material: 'matte',
       chipStyle: 'silver',
       contactless: true,
@@ -44,7 +44,7 @@ export const cardTemplates: CardTemplate[] = [
       tier: 'infinite',
       cardType: 'credit',
       colorMode: 'solid',
-      solidColor: '#1a1a2e',
+      solidColor: '#3d4463',
       material: 'brushedMetal',
       chipStyle: 'gold',
       contactless: true,
@@ -68,7 +68,7 @@ export const cardTemplates: CardTemplate[] = [
       tier: 'business',
       cardType: 'commercial',
       colorMode: 'preset',
-      presetColor: 'deepNavy',
+      presetColor: 'slateGray',
       material: 'glossy',
       chipStyle: 'gold',
       contactless: true,
@@ -145,7 +145,7 @@ export const cardTemplates: CardTemplate[] = [
       tier: 'platinum',
       cardType: 'credit',
       colorMode: 'preset',
-      presetColor: 'slateGray',
+      presetColor: 'roseGold',
       material: 'holographic',
       chipStyle: 'silver',
       contactless: true,
@@ -210,3 +210,210 @@ export const cardTemplates: CardTemplate[] = [
 export function applyTemplate(template: CardTemplate): CardConfig {
   return { ...defaultConfig, ...template.config };
 }
+
+// ── Program Templates ──────────────────────────────────────
+
+export interface ProgramTemplateTier {
+  name: string;
+  tier: string;
+  material: CardMaterial;
+  chipStyle: ChipStyle;
+  config: Partial<CardConfig>;
+}
+
+export interface ProgramTemplate {
+  id: string;
+  name: string;
+  description: string;
+  shared: {
+    issuerName: string;
+    network: CardNetwork;
+    issuingCountry: string;
+    issuerType: IssuerType;
+    currency: string;
+    brandColor: string;
+    brandAccent: string;
+  };
+  tiers: ProgramTemplateTier[];
+}
+
+export const programTemplates: ProgramTemplate[] = [
+  {
+    id: 'neobank-standard',
+    name: 'Neobank Standard',
+    description: '2-tier fintech program: Classic plastic + Premium metal',
+    shared: {
+      issuerName: 'Nova Finance',
+      network: 'visa',
+      issuingCountry: 'US',
+      issuerType: 'fintech',
+      currency: 'USD',
+      brandColor: '#0EA5E9',
+      brandAccent: '#6366F1',
+    },
+    tiers: [
+      {
+        name: 'Classic',
+        tier: 'classic',
+        material: 'matte',
+        chipStyle: 'silver',
+        config: {
+          colorMode: 'preset',
+          presetColor: 'oceanGradient',
+          contactless: true,
+          numberless: true,
+          cardholderName: 'CARDHOLDER NAME',
+          cardType: 'debit',
+        },
+      },
+      {
+        name: 'Premium',
+        tier: 'signature',
+        material: 'brushedMetal',
+        chipStyle: 'gold',
+        config: {
+          colorMode: 'solid',
+          solidColor: '#1E293B',
+          contactless: true,
+          numberless: false,
+          numberPosition: 'lower-center',
+          cardholderName: 'CARDHOLDER NAME',
+          cardType: 'credit',
+          programName: 'PREMIUM',
+        },
+      },
+    ],
+  },
+  {
+    id: 'enterprise-suite',
+    name: 'Enterprise Suite',
+    description: '3-tier corporate program: Employee, Manager, Executive',
+    shared: {
+      issuerName: 'Meridian Corp',
+      network: 'mastercard',
+      issuingCountry: 'US',
+      issuerType: 'bank',
+      currency: 'USD',
+      brandColor: '#334155',
+      brandAccent: '#0EA5E9',
+    },
+    tiers: [
+      {
+        name: 'Employee',
+        tier: 'standard',
+        material: 'matte',
+        chipStyle: 'silver',
+        config: {
+          colorMode: 'preset',
+          presetColor: 'slateGray',
+          cardType: 'commercial',
+          contactless: true,
+          cardholderName: 'EMPLOYEE NAME',
+          programName: 'EXPENSE',
+        },
+      },
+      {
+        name: 'Manager',
+        tier: 'business',
+        material: 'glossy',
+        chipStyle: 'gold',
+        config: {
+          colorMode: 'preset',
+          presetColor: 'deepNavy',
+          cardType: 'commercial',
+          contactless: true,
+          cardholderName: 'MANAGER NAME',
+          programName: 'CORPORATE',
+        },
+      },
+      {
+        name: 'Executive',
+        tier: 'world_elite',
+        material: 'brushedMetal',
+        chipStyle: 'gold',
+        config: {
+          colorMode: 'solid',
+          solidColor: '#0F172A',
+          cardType: 'commercial',
+          contactless: true,
+          cardholderName: 'EXECUTIVE NAME',
+          programName: 'EXECUTIVE',
+        },
+      },
+    ],
+  },
+  {
+    id: 'rewards-ladder',
+    name: 'Rewards Ladder',
+    description: '4-tier rewards program: Basic → Gold → Platinum → Black',
+    shared: {
+      issuerName: 'Ascent Bank',
+      network: 'visa',
+      issuingCountry: 'US',
+      issuerType: 'bank',
+      currency: 'USD',
+      brandColor: '#7C3AED',
+      brandAccent: '#F59E0B',
+    },
+    tiers: [
+      {
+        name: 'Basic',
+        tier: 'classic',
+        material: 'matte',
+        chipStyle: 'silver',
+        config: {
+          colorMode: 'preset',
+          presetColor: 'skyBlue',
+          cardType: 'credit',
+          contactless: true,
+          cardholderName: 'CARDHOLDER',
+          programName: 'REWARDS',
+        },
+      },
+      {
+        name: 'Gold',
+        tier: 'gold',
+        material: 'glossy',
+        chipStyle: 'gold',
+        config: {
+          colorMode: 'preset',
+          presetColor: 'sunsetOrange',
+          cardType: 'credit',
+          contactless: true,
+          cardholderName: 'CARDHOLDER',
+          programName: 'REWARDS GOLD',
+        },
+      },
+      {
+        name: 'Platinum',
+        tier: 'platinum',
+        material: 'metal',
+        chipStyle: 'gold',
+        config: {
+          colorMode: 'solid',
+          solidColor: '#475569',
+          cardType: 'credit',
+          contactless: true,
+          cardholderName: 'CARDHOLDER',
+          numberPosition: 'lower-center',
+          programName: 'REWARDS PLATINUM',
+        },
+      },
+      {
+        name: 'Black',
+        tier: 'infinite',
+        material: 'brushedMetal',
+        chipStyle: 'gold',
+        config: {
+          colorMode: 'solid',
+          solidColor: '#1E293B',
+          cardType: 'credit',
+          contactless: true,
+          cardholderName: 'CARDHOLDER',
+          numberPosition: 'lower-center',
+          programName: 'REWARDS BLACK',
+        },
+      },
+    ],
+  },
+];

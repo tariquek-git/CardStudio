@@ -6,6 +6,7 @@ import { usRules } from './rules/us';
 import { euRules } from './rules/eu';
 import { canadaRules } from './rules/canada';
 import { networkRules } from './rules/networks';
+import { brandDesignRules } from './rules/brandDesign';
 
 interface RuleModule {
   jurisdiction: 'US' | 'EU' | 'CA' | 'GLOBAL';
@@ -15,6 +16,7 @@ interface RuleModule {
 const modules: RuleModule[] = [
   { jurisdiction: 'GLOBAL', rules: generalRules },
   { jurisdiction: 'GLOBAL', rules: networkRules },
+  { jurisdiction: 'GLOBAL', rules: brandDesignRules },
   { jurisdiction: 'US', rules: usRules },
   { jurisdiction: 'EU', rules: euRules },
   { jurisdiction: 'CA', rules: canadaRules },

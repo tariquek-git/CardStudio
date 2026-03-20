@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth & Users ──────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String?
+  name         String?
+  avatarUrl    String?
+  role         UserRole  @default(USER)
+  disabled     Boolean   @default(false)
+
+  orgId String?
+  org   Organization? @relation(fields: [orgId], references: [id])
+
+  designs  Design[]
+  programs CardProgram[]
+  audits   AuditLog[]
+  apiKeys  ApiKey[]
+
+  anthropicKeyEnc String?
+  onboarded       Boolean   @default(false)
+  lastLoginAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([orgId])
+  @@index([email])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Organization {
+  id      String  @id @default(cuid())
+  name    String
+  slug    String  @unique
+  logoUrl String?
+  plan    OrgPlan @default(FREE)
+
+  users    User[]
+  designs  Design[]
+  programs CardProgram[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum OrgPlan {
+  FREE
+  PRO
+  ENTERPRISE
+}
+
+// ─── Core Data ─────────────────────────────────────
+
+model Design {
+  id           String  @id @default(cuid())
+  name         String
+  config       Json
+  thumbnailUrl String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  orgId String?
+  org   Organization? @relation(fields: [orgId], references: [id])
+
+  programId String?
+  program   CardProgram? @relation(fields: [programId], references: [id], onDelete: SetNull)
+
+  tier ProgramTier? @relation("TierDesign")
+
+  isTemplate      Boolean @default(false)
+  isPublic        Boolean @default(false)
+  complianceScore Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([orgId])
+  @@index([programId])
+  @@index([isTemplate])
+  @@index([updatedAt])
+}
+
+model CardProgram {
+  id   String @id @default(cuid())
+  name String
+
+  // Shared fields (cascade to all tier designs)
+  issuerName     String @default("")
+  network        String @default("visa")
+  railId         String @default("visa")
+  issuingCountry String @default("US")
+  issuerType     String @default("bank")
+  currency       String @default("USD")
+  brandColor     String @default("#0EA5E9")
+  brandAccent    String @default("#6366F1")
+  issuerLogoUrl  String?
+  coBrandPartner String @default("")
+  coBrandLogoUrl String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  orgId String?
+  org   Organization? @relation(fields: [orgId], references: [id])
+
+  tiers   ProgramTier[]
+  designs Design[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([orgId])
+}
+
+model ProgramTier {
+  id        String @id @default(cuid())
+  name      String
+  tier      String
+  material  String @default("matte")
+  chipStyle String @default("gold")
+  order     Int    @default(0)
+
+  programId String
+  program   CardProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  designId String @unique
+  design   Design @relation("TierDesign", fields: [designId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([programId])
+}
+
+// ─── Admin & Audit ─────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   String
+  metadata   Json?
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  keyHash   String    @unique
+  lastUsed  DateTime?
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([keyHash])
+}

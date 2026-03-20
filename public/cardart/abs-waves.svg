@@ -1,11 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 645" width="1024" height="645">
-  <g fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
-    <path d="M-50,580 C150,540 300,620 500,560 C700,500 850,580 1074,520" opacity="0.36"/>
-    <path d="M-50,520 C180,470 320,560 520,490 C720,420 870,510 1074,450" opacity="0.30"/>
-    <path d="M-50,450 C160,400 340,490 540,420 C740,350 880,440 1074,380" opacity="0.24"/>
-    <path d="M-50,380 C140,330 360,420 560,350 C760,280 890,370 1074,310" opacity="0.21"/>
-    <path d="M-50,310 C170,260 330,350 530,280 C730,210 860,300 1074,240" opacity="0.18"/>
-    <path d="M-50,240 C150,190 350,280 550,210 C750,140 870,230 1074,170" opacity="0.15"/>
-    <path d="M-50,170 C180,120 310,210 510,140 C710,70 880,160 1074,100" opacity="0.12"/>
+  <defs>
+    <linearGradient id="wg1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="wg2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="white" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0.02"/>
+    </linearGradient>
+  </defs>
+  <!-- Primary wave layer — bold, sweeping curves -->
+  <g fill="none" stroke="url(#wg1)" stroke-width="3" stroke-linecap="round">
+    <path d="M-80,620 C100,560 250,640 460,560 C670,480 820,580 1104,500"/>
+    <path d="M-80,540 C130,470 280,570 490,480 C700,390 840,500 1104,420" opacity="0.85"/>
+    <path d="M-80,460 C120,380 300,480 520,400 C740,320 860,420 1104,340" opacity="0.7"/>
+    <path d="M-80,380 C110,300 320,400 540,320 C760,240 880,340 1104,260" opacity="0.55"/>
+    <path d="M-80,300 C140,220 290,320 510,240 C730,160 850,260 1104,180" opacity="0.4"/>
+    <path d="M-80,220 C120,140 310,240 530,160 C750,80 870,180 1104,100" opacity="0.28"/>
+    <path d="M-80,140 C150,60 280,160 500,80 C720,0 890,100 1104,20" opacity="0.18"/>
+  </g>
+  <!-- Secondary wave layer — thinner, offset, adds depth -->
+  <g fill="none" stroke="url(#wg2)" stroke-width="1.5" stroke-linecap="round">
+    <path d="M-60,590 C110,530 270,610 470,530 C680,450 830,550 1084,470" opacity="0.5"/>
+    <path d="M-60,510 C140,440 260,540 480,450 C690,360 850,470 1084,390" opacity="0.4"/>
+    <path d="M-60,430 C130,350 290,450 510,370 C730,290 870,390 1084,310" opacity="0.3"/>
+    <path d="M-60,350 C120,270 310,370 530,290 C750,210 880,310 1084,230" opacity="0.22"/>
+    <path d="M-60,270 C150,190 280,290 500,210 C720,130 860,230 1084,150" opacity="0.15"/>
   </g>
 </svg>

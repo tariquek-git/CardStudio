@@ -108,7 +108,7 @@ export default function RailSelector({ railId, tier, isDark, onSelect }: RailSel
           />
         )}
         <span className="flex-1 text-left text-xs font-medium truncate">{displayLabel}</span>
-        <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
+        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isDark ? 'bg-slate-700 text-slate-400' : 'bg-slate-100 text-slate-500'}`}>
           {currentRail ? railCategories[currentRail.category].shortName : ''}
         </span>
         <svg
@@ -146,7 +146,7 @@ export default function RailSelector({ railId, tier, isDark, onSelect }: RailSel
                 <button
                   key={cat}
                   onClick={() => { setActiveCategory(cat); setExpandedRail(null); }}
-                  className={`px-2 py-1 text-[10px] font-medium rounded-md transition-colors ${
+                  className={`px-2 py-1 text-xs font-medium rounded-md transition-colors ${
                     activeCategory === cat
                       ? 'bg-sky-500 text-white'
                       : isDark
@@ -167,7 +167,7 @@ export default function RailSelector({ railId, tier, isDark, onSelect }: RailSel
                 <button
                   key={region || 'all'}
                   onClick={() => { setActiveRegion(region); setExpandedRail(null); }}
-                  className={`px-1.5 py-0.5 text-[9px] rounded transition-colors ${
+                  className={`px-1.5 py-0.5 text-[10px] rounded transition-colors ${
                     activeRegion === region
                       ? isDark ? 'bg-slate-600 text-slate-200' : 'bg-slate-200 text-slate-700'
                       : isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
@@ -190,7 +190,7 @@ export default function RailSelector({ railId, tier, isDark, onSelect }: RailSel
               ) : (
                 Array.from(groupedResults.entries()).map(([cat, rails]) => (
                   <div key={cat}>
-                    <div className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-wider ${isDark ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'}`}>
+                    <div className={`px-3 py-1 text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-500 bg-slate-800/50' : 'text-slate-400 bg-slate-50'}`}>
                       {railCategories[cat].name}
                     </div>
                     {rails.map(rail => (
@@ -284,7 +284,7 @@ function RailRow({
           {rail.shortName || rail.name}
         </span>
         {regionLabel && (
-          <span className={`text-[9px] px-1 py-0.5 rounded ${isDark ? 'bg-slate-700/50 text-slate-500' : 'bg-slate-100 text-slate-400'}`}>
+          <span className={`text-[10px] px-1 py-0.5 rounded ${isDark ? 'bg-slate-700/50 text-slate-500' : 'bg-slate-100 text-slate-400'}`}>
             {regionLabel}
           </span>
         )}

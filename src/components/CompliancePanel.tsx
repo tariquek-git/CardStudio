@@ -3,6 +3,8 @@ import { useCardConfig } from '../context';
 import { validateCompliance } from '../compliance';
 import type { ComplianceRule, ComplianceSeverity } from '../compliance/types';
 import type { CardConfig } from '../types';
+import ComplianceFixPreview, { getFieldLabel, formatValue } from './ComplianceFixPreview';
+import type { FixChange } from './ComplianceFixPreview';
 
 function severityIcon(severity: ComplianceSeverity) {
   switch (severity) {
@@ -115,7 +117,7 @@ function RuleCard({
             <p className={`text-xs font-semibold leading-tight ${colors.title}`}>
               {rule.title}
             </p>
-            <span className={`shrink-0 text-[9px] font-medium px-1.5 py-0.5 rounded-full ${colors.badge}`}>
+            <span className={`shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-full ${colors.badge}`}>
               {rule.jurisdiction}
             </span>
           </div>
@@ -126,7 +128,7 @@ function RuleCard({
           {/* Expandable explanation */}
           <button
             onClick={() => setExpanded(!expanded)}
-            className={`text-[10px] mt-1.5 font-medium flex items-center gap-0.5 transition-colors ${
+            className={`text-xs mt-1.5 font-medium flex items-center gap-0.5 transition-colors ${
               isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
@@ -143,7 +145,7 @@ function RuleCard({
             <div className={`mt-2 text-xs leading-relaxed space-y-1.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               <p>{rule.explanation}</p>
               {rule.regulationRef && (
-                <p className={`text-[10px] font-mono ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                <p className={`text-xs font-mono ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
                   Ref: {rule.regulationRef}
                 </p>
               )}
@@ -178,6 +180,31 @@ export default function CompliancePanel({ isDark }: { isDark: boolean }) {
   const { config, updateConfig } = useCardConfig();
   const result = useMemo(() => validateCompliance(config), [config]);
   const [showInfos, setShowInfos] = useState(false);
+  const [showFixPreview, setShowFixPreview] = useState(false);
+
+  const fixableRules = useMemo(
+    () => result.rules.filter(r => r.autoFixable && r.autoFix),
+    [result.rules],
+  );
+
+  const mergedFix = useMemo(
+    () => Object.assign({}, ...fixableRules.map(r => r.autoFix!)) as Partial<CardConfig>,
+    [fixableRules],
+  );
+
+  const fixChanges = useMemo<FixChange[]>(() => {
+    return Object.entries(mergedFix)
+      .filter(([key, value]) => {
+        const current = config[key as keyof CardConfig];
+        return current !== value;
+      })
+      .map(([key, value]) => ({
+        field: key,
+        label: getFieldLabel(key),
+        currentValue: formatValue(config[key as keyof CardConfig]),
+        newValue: formatValue(value),
+      }));
+  }, [mergedFix, config]);
 
   if (result.rules.length === 0) {
     return (
@@ -214,11 +241,34 @@ export default function CompliancePanel({ isDark }: { isDark: boolean }) {
               </span>
             )}
           </div>
-          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+          <p className={`text-xs mt-0.5 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
             {result.passesNetworkCert ? 'Passes network certification' : 'Fails network certification'}
           </p>
         </div>
       </div>
+
+      {/* Fix All button */}
+      {fixChanges.length > 0 && (
+        <button
+          onClick={() => setShowFixPreview(true)}
+          className={`w-full text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+            isDark
+              ? 'bg-sky-500/20 text-sky-300 hover:bg-sky-500/30'
+              : 'bg-sky-100 text-sky-700 hover:bg-sky-200'
+          }`}
+        >
+          Fix All ({fixChanges.length} issue{fixChanges.length !== 1 ? 's' : ''})
+        </button>
+      )}
+
+      {/* Fix preview modal */}
+      <ComplianceFixPreview
+        open={showFixPreview}
+        onClose={() => setShowFixPreview(false)}
+        onApply={() => updateConfig(mergedFix)}
+        changes={fixChanges}
+        isDark={isDark}
+      />
 
       {/* Errors */}
       {result.errors.length > 0 && (
@@ -274,12 +324,12 @@ export function ComplianceBadge({ isDark }: { isDark: boolean }) {
   const result = useMemo(() => validateCompliance(config), [config]);
 
   if (result.errors.length === 0 && result.warnings.length === 0) {
-    return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>OK</span>;
+    return <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>OK</span>;
   }
 
   if (result.errors.length > 0) {
-    return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-700'}`}>{result.errors.length + result.warnings.length}</span>;
+    return <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-700'}`}>{result.errors.length + result.warnings.length}</span>;
   }
 
-  return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'}`}>{result.warnings.length}</span>;
+  return <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'}`}>{result.warnings.length}</span>;
 }

@@ -200,18 +200,26 @@ function getSubTextColor(config: CardConfig): string {
 
 // ─── SHEEN / DEPTH EFFECTS ──────────────────────────────────
 function drawCardSheen(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  // Subtle top-edge highlight
-  const sheen = ctx.createLinearGradient(0, 0, 0, h * 0.35);
-  sheen.addColorStop(0, 'rgba(255,255,255,0.08)');
+  // Top-edge highlight — studio softbox reflection
+  const sheen = ctx.createLinearGradient(0, 0, w * 0.3, h * 0.4);
+  sheen.addColorStop(0, 'rgba(255,255,255,0.12)');
+  sheen.addColorStop(0.5, 'rgba(255,255,255,0.04)');
   sheen.addColorStop(1, 'rgba(255,255,255,0)');
   ctx.fillStyle = sheen;
-  ctx.fillRect(0, 0, w, h * 0.35);
+  ctx.fillRect(0, 0, w, h * 0.4);
 
-  // Inner edge highlight (1px)
+  // Subtle bottom vignette for depth
+  const vignette = ctx.createLinearGradient(0, h * 0.7, 0, h);
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,0,0.06)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, h * 0.7, w, h * 0.3);
+
+  // Inner edge highlight (1px) — card bevel
   ctx.save();
   roundedRect(ctx, 1, 1, w - 2, h - 2, CORNER_RADIUS - 1);
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 1.2;
   ctx.stroke();
   ctx.restore();
 }
@@ -350,11 +358,11 @@ function drawEmbossedText(
 ) {
   ctx.save();
   // Shadow (below) — simulates emboss depth
-  ctx.fillStyle = isLightText ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.4)';
-  ctx.fillText(text, x + 2.5, y + 3);
-  // Highlight (above) — simulates light catch
-  ctx.fillStyle = isLightText ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.45)';
-  ctx.fillText(text, x - 1.2, y - 1.5);
+  ctx.fillStyle = isLightText ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.35)';
+  ctx.fillText(text, x + 1.5, y + 2);
+  // Highlight (above) — simulates light catch on raised edge
+  ctx.fillStyle = isLightText ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.4)';
+  ctx.fillText(text, x - 0.8, y - 1);
   // Main text
   ctx.fillStyle = color;
   ctx.fillText(text, x, y);

@@ -113,7 +113,101 @@ export interface SavedDesign {
   thumbnail: string; // small PNG data URL
   createdAt: number;
   updatedAt: number;
+  programId?: string; // if part of a card program
 }
+
+// ── Card Program Management ──
+
+export interface ProgramTier {
+  id: string;
+  name: string;              // "Reserve", "Freedom"
+  tier: string;              // network tier (infinite, signature, etc.)
+  cardConfigId: string;      // → SavedDesign.id
+  material: CardMaterial;
+  chipStyle: ChipStyle;
+  order: number;             // display sort order
+}
+
+export interface CardProgram {
+  id: string;
+  name: string;              // "Chase Sapphire"
+  issuerName: string;        // shared across all tiers
+  network: CardNetwork;      // shared
+  railId: string;            // shared
+  issuingCountry: string;    // shared
+  issuerType: IssuerType;    // shared
+  currency: string;          // shared
+  brandColor: string;        // primary brand color
+  brandAccent: string;       // secondary accent
+  issuerLogo: string | null; // shared logo
+  coBrandPartner: string;    // shared
+  coBrandLogo: string | null;// shared
+  tiers: ProgramTier[];
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** Fields that cascade from program to all tier designs */
+export const PROGRAM_SHARED_FIELDS: (keyof CardConfig)[] = [
+  'issuerName', 'network', 'railId', 'issuingCountry',
+  'issuerType', 'currency', 'issuerLogo', 'coBrandPartner', 'coBrandLogo',
+];
+
+// ── Card Print Specifications (ISO 7810 / 7816 / Network Brand Standards) ──
+
+export const CARD_PRINT_SPECS = {
+  /** ISO 7810 ID-1 card dimensions */
+  card: {
+    widthMm: 85.60,
+    heightMm: 53.98,
+    thicknessMm: 0.76,
+    cornerRadiusMm: 3.18,
+  },
+  /** Print bleed and safe area */
+  print: {
+    bleedMm: 3.0,          // extend background beyond edge
+    safeAreaMm: 4.0,       // keep text/logos inside this margin
+    resolutionDpi: 300,
+    colorMode: 'CMYK' as const,
+    minFontSizePt: 6,
+  },
+  /** EMV chip contact pad (ISO 7816-2) */
+  chip: {
+    widthMm: 12.76,
+    heightMm: 11.25,
+    fromLeftMm: 19.23,     // left edge to contact left boundary
+    fromTopMm: 20.93,      // top edge to contact top boundary
+    exclusionMm: 2.0,      // no-print zone around chip recess
+  },
+  /** Magnetic stripe (back of card) */
+  magStripe: {
+    fromTopPercent: 10,     // ~5.4mm from top edge
+    heightMm: 12.7,        // standard HiCo stripe
+  },
+  /** Visa brand mark placement */
+  visa: {
+    blockingWidthMm: 21.6,
+    blockingHeightMm: 8.967,
+    fromRightMm: 3.05,
+    fromBottomMm: 3.0,
+    digitalEdgePx: 56,     // digital card: 56px from edge
+  },
+  /** Mastercard brand mark */
+  mastercard: {
+    clearSpaceRatio: 0.25,  // 1/4 width of one circle
+    minWidthMm: 12.7,       // 0.5 inch minimum
+    symbolOnlyBelowPt: 48,  // remove wordmark below this size
+  },
+  /** American Express Blue Box */
+  amex: {
+    clearSpaceMultiplier: 1.5, // 1.5× Blue Box size from non-Amex marks
+  },
+  /** Embossing specifications */
+  embossing: {
+    fontHeightMm: 5.0,     // OCR-B standard
+    fonts: ['OCR-B', 'Gothic'] as const,
+  },
+} as const;
 
 export const defaultConfig: CardConfig = {
   railId: 'visa',

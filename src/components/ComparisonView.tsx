@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import { useCardConfig } from '../context';
-import { drawCardFront, drawCardBack, ensureLogosLoaded } from '../cardCanvas';
+import { drawCardFront, drawCardBack, ensureLogosLoaded } from '../canvas';
 import { validateCompliance } from '../compliance';
 import type { CardConfig, SavedDesign } from '../types';
 

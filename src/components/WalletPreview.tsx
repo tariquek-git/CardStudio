@@ -205,7 +205,7 @@ export function AppleWalletView({ config }: { config: CardConfig }) {
             <div key={tx.name} className="flex justify-between items-center">
               <div>
                 <div className="text-xs font-medium" style={{ color: isDark ? '#fff' : '#000' }}>{tx.name}</div>
-                <div className="text-[9px]" style={{ color: subColor }}>{tx.date}</div>
+                <div className="text-[10px]" style={{ color: subColor }}>{tx.date}</div>
               </div>
               <div className="text-xs font-medium" style={{ color: isDark ? '#fff' : '#000' }}>{tx.amount}</div>
             </div>
@@ -304,7 +304,7 @@ export function GoogleWalletView({ config }: { config: CardConfig }) {
             <div className="text-xs font-medium" style={{ color: textColor }}>
               {config.issuerName} &bull;&bull;&bull;&bull; {last4}
             </div>
-            <div className="text-[9px]" style={{ color: subColor }}>
+            <div className="text-[10px]" style={{ color: subColor }}>
               Default
             </div>
           </div>
@@ -322,7 +322,7 @@ export function GoogleWalletView({ config }: { config: CardConfig }) {
           </div>
           <div>
             <div className="text-xs font-medium" style={{ color: textColor }}>Starbucks Rewards</div>
-            <div className="text-[9px]" style={{ color: subColor }}>142 Stars</div>
+            <div className="text-[10px]" style={{ color: subColor }}>142 Stars</div>
           </div>
         </div>
       </div>

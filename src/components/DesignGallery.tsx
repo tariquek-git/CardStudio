@@ -1,36 +1,17 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useCardConfig } from '../context';
-import { drawCardFront, ensureLogosLoaded } from '../cardCanvas';
+import { generateThumbnail } from '../thumbnailUtils';
 import { ConfirmDialog } from './ui';
 import type { SavedDesign } from '../types';
-
-// Generate a small thumbnail from a card config
-function generateThumbnail(config: SavedDesign['config']): Promise<string> {
-  return new Promise(resolve => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 200;
-    canvas.height = 126;
-    Promise.all([
-      document.fonts.ready,
-      ensureLogosLoaded(config.issuerLogo, config.cardArt),
-    ])
-      .then(() => {
-        drawCardFront(canvas, config);
-        resolve(canvas.toDataURL('image/png', 0.7));
-      })
-      .catch(() => {
-        // If thumbnail generation fails, return empty string (placeholder will show)
-        resolve('');
-      });
-  });
-}
 
 export default function DesignGallery({
   isOpen,
   onClose,
+  onOpenDesign,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onOpenDesign?: () => void;
 }) {
   const {
     config,
@@ -42,8 +23,20 @@ export default function DesignGallery({
     duplicateDesign,
     renameDesign,
     updateDesignThumbnail,
+    programs,
   } = useCardConfig();
   const isDark = config.darkMode;
+
+  // Build lookup: designId → program name
+  const designProgramMap = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const p of programs) {
+      for (const t of p.tiers) {
+        map.set(t.cardConfigId, p.name);
+      }
+    }
+    return map;
+  }, [programs]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [saveName, setSaveName] = useState('');
@@ -184,7 +177,7 @@ export default function DesignGallery({
                   setSaveName(`${config.issuerName} ${config.tier}`.trim());
                   setShowSaveInput(true);
                 }}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-sky-500 text-white hover:bg-sky-600 transition-colors"
+                className="px-3 py-1.5 text-xs font-medium rounded-lg bg-sky-500 text-white hover:bg-sky-600 hover:shadow-[0_0_12px_rgba(14,165,233,0.3)] transition-all active:scale-[0.97]"
               >
                 Save Current
               </button>
@@ -275,7 +268,8 @@ export default function DesignGallery({
                   textSecondary={textSecondary}
                   inputBg={inputBg}
                   isDark={isDark}
-                  onLoad={() => { loadDesign(design.id); onClose(); }}
+                  programName={designProgramMap.get(design.id)}
+                  onLoad={() => { loadDesign(design.id); (onOpenDesign || onClose)(); }}
                   onStartEdit={() => { setEditingId(design.id); setEditName(design.name); }}
                   onEditNameChange={setEditName}
                   onFinishEdit={() => handleRename(design.id)}
@@ -316,6 +310,7 @@ function DesignCard({
   textSecondary,
   inputBg,
   isDark,
+  programName,
   onLoad,
   onStartEdit,
   onEditNameChange,
@@ -336,6 +331,7 @@ function DesignCard({
   textSecondary: string;
   inputBg: string;
   isDark: boolean;
+  programName?: string;
   onLoad: () => void;
   onStartEdit: () => void;
   onEditNameChange: (name: string) => void;
@@ -352,7 +348,7 @@ function DesignCard({
 
   return (
     <div
-      className={`group rounded-lg border ${activeBorder} ${hoverBorder} ${cardBg} overflow-hidden transition-all cursor-pointer`}
+      className={`group rounded-lg border ${activeBorder} ${hoverBorder} ${cardBg} overflow-hidden transition-all cursor-pointer hover:-translate-y-0.5 hover:shadow-md`}
       onClick={onLoad}
     >
       {/* Thumbnail */}
@@ -369,8 +365,13 @@ function DesignCard({
           </div>
         )}
         {isActive && (
-          <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[9px] font-semibold bg-sky-500 text-white">
+          <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-sky-500 text-white">
             Active
+          </div>
+        )}
+        {programName && (
+          <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-violet-500/80 text-white backdrop-blur-sm">
+            {programName}
           </div>
         )}
       </div>
@@ -393,7 +394,7 @@ function DesignCard({
           <p className={`text-xs font-medium truncate ${textPrimary}`}>{design.name}</p>
         )}
         <div className="flex items-center justify-between mt-1">
-          <span className={`text-[10px] ${textSecondary}`}>{dateStr}</span>
+          <span className={`text-xs ${textSecondary}`}>{dateStr}</span>
           <div className="flex items-center gap-0.5">
             <ActionBtn
               title="Rename"

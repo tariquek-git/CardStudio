@@ -55,7 +55,7 @@ export function Toggle({
             </span>
           )}
           {sublabel && (
-            <span className={`block text-[11px] ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+            <span className={`block text-xs ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
               {sublabel}
             </span>
           )}
@@ -233,7 +233,7 @@ export function Section({
           </span>
           {badge !== undefined && badge !== null && (
             typeof badge === 'object' ? badge : (
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+              <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
                 isDark ? 'bg-slate-700 text-slate-300' : 'bg-slate-200 text-slate-500'
               }`}>
                 {badge}
@@ -458,6 +458,7 @@ export function Input({
   mono = false,
   className: extraClass = '',
   inputMode,
+  disabled = false,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -468,6 +469,7 @@ export function Input({
   mono?: boolean;
   className?: string;
   inputMode?: 'numeric' | 'text';
+  disabled?: boolean;
 }) {
   return (
     <input
@@ -477,9 +479,10 @@ export function Input({
       placeholder={placeholder}
       maxLength={maxLength}
       inputMode={inputMode}
+      disabled={disabled}
       className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
         mono ? 'font-mono' : ''
-      } ${
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${
         isDark
           ? 'bg-slate-800/70 border-transparent text-slate-200 placeholder:text-slate-600 hover:bg-slate-800 focus:bg-slate-800 focus:border-sky-500/40'
           : 'bg-slate-50 border-transparent text-slate-700 placeholder:text-slate-400 hover:bg-slate-100 focus:bg-white focus:border-sky-300'
@@ -500,6 +503,7 @@ export function LabeledInput({
   mono = false,
   hint,
   inputMode,
+  disabled = false,
 }: {
   label: string;
   value: string;
@@ -511,6 +515,7 @@ export function LabeledInput({
   mono?: boolean;
   hint?: ReactNode;
   inputMode?: 'numeric' | 'text';
+  disabled?: boolean;
 }) {
   return (
     <div>
@@ -531,6 +536,7 @@ export function LabeledInput({
         uppercase={uppercase}
         mono={mono}
         inputMode={inputMode}
+        disabled={disabled}
       />
       {hint}
     </div>
@@ -624,12 +630,14 @@ export function Select<T extends string>({
   options,
   isDark,
   label,
+  disabled = false,
 }: {
   value: T;
   onChange: (v: T) => void;
   options: { value: T; label: string }[];
   isDark: boolean;
   label?: string;
+  disabled?: boolean;
 }) {
   return (
     <div>
@@ -637,7 +645,8 @@ export function Select<T extends string>({
       <select
         value={value}
         onChange={e => onChange(e.target.value as T)}
-        className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors appearance-none cursor-pointer bg-no-repeat focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${
+        disabled={disabled}
+        className={`w-full px-3.5 py-2.5 text-xs rounded-lg border transition-colors appearance-none cursor-pointer bg-no-repeat focus:outline-none focus:ring-2 focus:ring-sky-400/50 ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${
           isDark
             ? 'bg-slate-800/70 border-transparent text-slate-200 hover:bg-slate-800 focus:bg-slate-800 focus:border-sky-500/40'
             : 'bg-slate-50 border-transparent text-slate-700 hover:bg-slate-100 focus:bg-white focus:border-sky-300'

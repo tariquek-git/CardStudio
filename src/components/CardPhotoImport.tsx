@@ -140,7 +140,7 @@ export default function CardPhotoImport({ isDark }: { isDark: boolean }) {
         >
           <div className="text-2xl mb-1">+</div>
           <div className="text-xs font-medium">Upload a card photo</div>
-          <div className={`text-[10px] mt-0.5 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+          <div className={`text-xs mt-0.5 ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
             Extract colors and use as inspiration
           </div>
         </button>

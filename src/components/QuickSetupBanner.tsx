@@ -100,7 +100,7 @@ export default function QuickSetupBanner({ isDark }: { isDark: boolean }) {
                 ? 'bg-sky-500'
                 : isDark ? 'bg-slate-700' : 'bg-slate-200'
             }`} />
-            <span className={`text-[9px] font-medium ${
+            <span className={`text-[10px] font-medium ${
               i === step ? (isDark ? 'text-sky-400' : 'text-sky-600') : textSecondary
             }`}>{s}</span>
           </div>

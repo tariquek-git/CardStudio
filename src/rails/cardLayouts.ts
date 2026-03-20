@@ -1,7 +1,7 @@
 import type { CardConfig } from '../types';
 import type { PaymentRail } from './types';
 import { getRail } from './index';
-import { TEX_SCALE } from '../cardCanvas';
+import { TEX_SCALE } from '../canvas';
 
 // Canvas constants (must match cardCanvas.ts)
 const H_WIDTH = 1024;

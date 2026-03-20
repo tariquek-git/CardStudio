@@ -1,6 +1,6 @@
 import { useRef, useState, useMemo, useEffect, useCallback } from 'react';
 import { useCardConfig } from '../context';
-import { drawCardFront, ensureLogosLoaded } from '../cardCanvas';
+import { drawCardFront, ensureLogosLoaded } from '../canvas';
 import { presetColors, stockCardArt } from '../data';
 import { validateBrandGuidelines, type BrandWarning } from '../brandRules';
 import { cardTemplates, applyTemplate } from '../templates';
@@ -277,7 +277,7 @@ export default function LeftPanel() {
                 {d.thumbnail ? (
                   <img src={d.thumbnail} alt={d.name} className="w-full aspect-[1.59/1] object-cover" />
                 ) : (
-                  <div className={`w-full aspect-[1.59/1] ${isDark ? 'bg-slate-800' : 'bg-slate-100'} flex items-center justify-center text-[9px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
+                  <div className={`w-full aspect-[1.59/1] ${isDark ? 'bg-slate-800' : 'bg-slate-100'} flex items-center justify-center text-[10px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>
                     ...
                   </div>
                 )}
@@ -322,7 +322,7 @@ export default function LeftPanel() {
               <p className={`text-xs font-semibold truncate ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
                 {tmpl.name}
               </p>
-              <p className={`text-[10px] mt-0.5 leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+              <p className={`text-xs mt-0.5 leading-tight ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
                 {tmpl.description}
               </p>
             </button>
@@ -1406,7 +1406,7 @@ function CardArtSection({
               <path d="M10 4v12M4 10h12" />
             </svg>
             <span className="text-xs font-medium">Click to upload</span>
-            <span className={`text-[10px] ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>PNG, JPG, SVG up to 2MB</span>
+            <span className={`text-xs ${isDark ? 'text-slate-600' : 'text-slate-400'}`}>PNG, JPG, SVG up to 2MB</span>
           </button>
         </div>
       )}
@@ -1467,7 +1467,7 @@ function CardArtSection({
                   <div className={`w-full h-full ${isDark ? 'bg-slate-800' : 'bg-slate-100'}`} />
                 )}
               </div>
-              <span className={`text-[9px] py-0.5 w-full text-center truncate ${
+              <span className={`text-[10px] py-0.5 w-full text-center truncate ${
                 isDark ? 'bg-slate-800/80 text-slate-400' : 'bg-slate-50 text-slate-500'
               }`}>
                 {sa.label}

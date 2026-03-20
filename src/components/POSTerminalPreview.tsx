@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCardConfig } from '../context';
-import { drawCardFront, ensureLogosLoaded } from '../cardCanvas';
+import { drawCardFront, ensureLogosLoaded } from '../canvas';
 
 export default function POSTerminalPreview() {
   const { config } = useCardConfig();
@@ -67,7 +67,7 @@ export default function POSTerminalPreview() {
           <div className="text-green-400 text-xs font-mono font-bold tracking-wider mb-0.5">
             TAP CARD
           </div>
-          <div className="text-green-400/50 text-[9px] font-mono">
+          <div className="text-green-400/50 text-[10px] font-mono">
             $42.50
           </div>
         </div>
@@ -77,7 +77,7 @@ export default function POSTerminalPreview() {
           {[1,2,3,4,5,6,7,8,9,'*',0,'#'].map((k, i) => (
             <div
               key={i}
-              className="aspect-square rounded flex items-center justify-center text-[9px] font-mono"
+              className="aspect-square rounded flex items-center justify-center text-[10px] font-mono"
               style={{
                 background: isDark ? '#334155' : '#4b5563',
                 color: isDark ? '#94a3b8' : '#d1d5db',

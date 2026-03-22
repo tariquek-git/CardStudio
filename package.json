@@ -22,12 +22,15 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
+    "@sentry/react": "^10.45.0",
+    "@sentry/vite-plugin": "^5.1.1",
     "@tailwindcss/vite": "^4.2.1",
     "@vercel/blob": "^2.3.1",
     "bcryptjs": "^3.0.3",
     "html2canvas": "^1.4.1",
     "jose": "^6.2.2",
     "jspdf": "^4.2.0",
+    "posthog-js": "^1.363.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -39,7 +42,10 @@
     "node": ">=20"
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["prettier --write", "eslint --fix"]
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
